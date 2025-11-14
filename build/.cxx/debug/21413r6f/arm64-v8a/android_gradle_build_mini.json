@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/orsi/develop/flutter/packages/flutter_tools/gradle/src/main/scripts/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/orsi/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/orsi/szakdoga/fam-ily/build/.cxx/debug/21413r6f/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/orsi/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/orsi/szakdoga/fam-ily/build/.cxx/debug/21413r6f/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
