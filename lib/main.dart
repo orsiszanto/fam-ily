@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,41 +15,25 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.lightGreen,
           title: const Text('FAM-ILY'),
         ),
-
-        body: ElevatedButton(
-          child: Text('Register'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => RegScreen()),
-            );
-          },
-        ),
-        
-
-        /*body: Container(
-          child: Column(
-            children: <Widget> [
-              const ElevatedButton(
-                onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:(_) RegScreen(),
-                      ),
-                      );
-                },
-                child: Text('Registrate')
-                 ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: null,
-                child: const Text('Log in')
-                ),
-            ],
-          ),
-        ),*/
+        body: const AuthPage(),
       ),
+    );
+  }
+}
+
+class AuthPage extends StatelessWidget {
+  const AuthPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      child: const Text('Register'),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const RegScreen()),
+        );
+      },
     );
   }
 }
@@ -60,6 +43,9 @@ class RegScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar());
+    return Scaffold(
+      appBar: AppBar(),
+      body: const Center(child: Text("You made it to the Reg page")),
+    );
   }
 }
