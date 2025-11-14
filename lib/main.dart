@@ -1,46 +1,65 @@
+
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    if (user == null) {
-      print('User is currently signed out!');
-    } else {
-      print('User is signed in!');
-    }
-  });
-
-  FirebaseAuth.instance.idTokenChanges().listen((User? user) {
-    if (user == null) {
-      print('User is currently signed out!');
-    } else {
-      print('User is signed in!');
-    }
-  });
-
-  FirebaseAuth.instance.userChanges().listen((User? user) {
-    if (user == null) {
-      print('User is currently signed out!');
-    } else {
-      print('User is signed in!');
-    }
-  });
-
-  runApp(const MainApp());
+void main() {
+  runApp(MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.lightGreen,
+          title: const Text('FAM-ILY'),
+        ),
+
+        body: ElevatedButton(
+          child: Text('Register'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => RegScreen()),
+            );
+          },
+        ),
+        
+
+        /*body: Container(
+          child: Column(
+            children: <Widget> [
+              const ElevatedButton(
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:(_) RegScreen(),
+                      ),
+                      );
+                },
+                child: Text('Registrate')
+                 ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: null,
+                child: const Text('Log in')
+                ),
+            ],
+          ),
+        ),*/
+      ),
     );
+  }
+}
+
+class RegScreen extends StatelessWidget {
+  const RegScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar());
   }
 }

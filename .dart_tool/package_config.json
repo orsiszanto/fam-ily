@@ -104,6 +104,12 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "fluttertoast",
+      "rootUri": "file:///home/orsi/.pub-cache/hosted/pub.dev/fluttertoast-9.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "http",
       "rootUri": "file:///home/orsi/.pub-cache/hosted/pub.dev/http-1.6.0",
       "packageUri": "lib/",
