@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import './registration_page.dart';
+import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/dashboard/main_page.dart';
 
 class LoginScreen extends StatelessWidget {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+
+  LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 26),
                   ElevatedButton(
-                    child: const Text('Log in'),
                     onPressed: () {
                       String email = emailController.text.trim();
                       String password = passwordController.text.trim();
@@ -79,6 +80,7 @@ class LoginScreen extends StatelessWidget {
                       minimumSize: Size.fromHeight(50),
                       textStyle: TextStyle(fontSize: 18),
                     ),
+                    child: const Text('Log in'),
                   ),
                 ],
               ),
@@ -86,7 +88,6 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 26),
             Text('If you have no account, please sign in'),
             ElevatedButton(
-              child: const Text('Sign in'),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -99,6 +100,7 @@ class LoginScreen extends StatelessWidget {
                 minimumSize: Size.fromHeight(50),
                 textStyle: TextStyle(fontSize: 18),
               ),
+              child: const Text('Sign in'),
             ),
           ],
         ),

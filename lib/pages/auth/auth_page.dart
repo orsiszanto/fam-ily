@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import './registration_page.dart';
-import './login_page.dart';
+import 'package:familyapp/pages/auth/registration_page.dart';
+import 'package:familyapp/pages/auth/login_page.dart';
+
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -20,7 +21,6 @@ class AuthPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              child: const Text('Sign in'),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -33,11 +33,11 @@ class AuthPage extends StatelessWidget {
                 minimumSize: Size.fromHeight(50),
                 textStyle: TextStyle(fontSize: 18),
               ),
+              child: const Text('Sign in'),
             ),
           ),
           SizedBox(height: 16),
           ElevatedButton(
-            child: const Text('Log in'),
             onPressed: () {
               Navigator.push(
                 context,
@@ -50,6 +50,7 @@ class AuthPage extends StatelessWidget {
               minimumSize: Size.fromHeight(50),
               textStyle: TextStyle(fontSize: 18),
             ),
+            child: const Text('Log in'),
           ),
         ],
       ),

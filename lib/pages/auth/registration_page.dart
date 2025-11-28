@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import './login_page.dart';
+import 'package:familyapp/pages/auth/login_page.dart';
 
 class RegScreen extends StatelessWidget {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+
+  RegScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,6 @@ class RegScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 26),
                   ElevatedButton(
-                    child: const Text('Sign in'),
                     onPressed: () {
                       String email = emailController.text.trim();
                       String password = passwordController.text.trim();
@@ -83,6 +84,7 @@ class RegScreen extends StatelessWidget {
                       minimumSize: Size.fromHeight(50),
                       textStyle: TextStyle(fontSize: 18),
                     ),
+                    child: const Text('Sign in'),
                   ),
                 ],
               ),
@@ -90,7 +92,6 @@ class RegScreen extends StatelessWidget {
             SizedBox(height: 26),
             Text('If you already have an account, please log in'),
             ElevatedButton(
-              child: const Text('Log in'),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -103,6 +104,7 @@ class RegScreen extends StatelessWidget {
                 minimumSize: Size.fromHeight(50),
                 textStyle: TextStyle(fontSize: 18),
               ),
+              child: const Text('Log in'),
             ),
           ],
         ),
