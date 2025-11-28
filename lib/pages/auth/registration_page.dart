@@ -1,8 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import './login_page.dart';
-
 
 class RegScreen extends StatelessWidget {
   var emailController = TextEditingController();
@@ -67,7 +65,7 @@ class RegScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
+                                  builder: (_) => LoginScreen(),
                                 ),
                               );
                             })
@@ -96,7 +94,7 @@ class RegScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -112,6 +110,9 @@ class RegScreen extends StatelessWidget {
     );
   }
 
+  // Source - https://stackoverflow.com/a
+  // Posted by JideGuru, modified by community. See post 'Timeline' for change history
+  // Retrieved 2025-11-28, License - CC BY-SA 4.0
   String? validateEmail(String? value) {
     const pattern =
         r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"

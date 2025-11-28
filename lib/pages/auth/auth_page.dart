@@ -37,11 +37,11 @@ class AuthPage extends StatelessWidget {
           ),
           SizedBox(height: 16),
           ElevatedButton(
-            child: const Text('Login'),
+            child: const Text('Log in'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                MaterialPageRoute(builder: (_) => LoginScreen()),
               );
             },
             style: ElevatedButton.styleFrom(
