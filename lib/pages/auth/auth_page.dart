@@ -3,9 +3,14 @@ import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/auth/login_page.dart';
 
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
+  @override
+  State<AuthPage> createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: appBar(), body: wholeBody(context));
@@ -33,7 +38,7 @@ class AuthPage extends StatelessWidget {
                 minimumSize: Size.fromHeight(50),
                 textStyle: TextStyle(fontSize: 18),
               ),
-              child: const Text('Sign in'),
+              child: const Text('Sign up'),
             ),
           ),
           SizedBox(height: 16),

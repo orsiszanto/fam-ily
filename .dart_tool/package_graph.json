@@ -10,6 +10,7 @@
         "firebase_auth",
         "firebase_core",
         "flutter",
+        "flutter_bloc",
         "fluttertoast"
       ],
       "devDependencies": [
@@ -40,6 +41,15 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "flutter_bloc",
+      "version": "9.1.1",
+      "dependencies": [
+        "bloc",
+        "flutter",
+        "provider"
       ]
     },
     {
@@ -357,6 +367,29 @@
       "version": "1.4.0",
       "dependencies": [
         "collection"
+      ]
+    },
+    {
+      "name": "bloc",
+      "version": "9.1.0",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "provider",
+      "version": "6.1.5+1",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "nested"
+      ]
+    },
+    {
+      "name": "nested",
+      "version": "1.0.0",
+      "dependencies": [
+        "flutter"
       ]
     }
   ],

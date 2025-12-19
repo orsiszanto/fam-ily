@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:familyapp/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/dashboard/main_page.dart';
@@ -52,11 +52,7 @@ class LoginScreen extends StatelessWidget {
                           SnackBar(content: Text("Fill out every field!")),
                         );
                       } else {
-                        FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                              email: email,
-                              password: password,
-                            )
+                        UserService.logIn(email, password)
                             .then((value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

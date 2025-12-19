@@ -17,17 +17,17 @@ class Dashboard extends StatelessWidget {
     return GridView.count(
       crossAxisCount: 2,
       children: [
-        _buildGrindItem(context, Icons.checklist_outlined, "ToDo List"),
-        _buildGrindItem(context, Icons.calendar_today_outlined, "Calendar"),
-        _buildGrindItem(context, Icons.note_outlined, "Notes"),
-        _buildGrindItem(context, Icons.folder_outlined, "Documents"),
-        _buildGrindItem(context, Icons.contacts_outlined, "Contacts"),
+        _buildGridItem(context, Icons.checklist_outlined, "ToDo List"),
+        _buildGridItem(context, Icons.calendar_today_outlined, "Calendar"),
+        _buildGridItem(context, Icons.note_outlined, "Notes"),
+        _buildGridItem(context, Icons.folder_outlined, "Documents"),
+        _buildGridItem(context, Icons.contacts_outlined, "Contacts"),
         const SizedBox(),
       ],
     );
   }
 
-  Widget _buildGrindItem(BuildContext context, IconData icon, String label) {
+  Widget _buildGridItem(BuildContext context, IconData icon, String label) {
     return GestureDetector(
       onTap: () {
         switch (label) {

@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:familyapp/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/auth/login_page.dart';
 
@@ -51,15 +51,11 @@ class RegScreen extends StatelessWidget {
                           SnackBar(content: Text("Fill out every field")),
                         );
                       } else {
-                        FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                              email: email,
-                              password: password,
-                            )
+                        UserService.signUp(email, password)
                             .then((value) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text("Successful signing in!"),
+                                  content: Text("Successful signing up!"),
                                 ),
                               );
 
