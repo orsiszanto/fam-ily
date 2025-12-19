@@ -90,6 +90,7 @@ class Dashboard extends StatelessWidget {
     return AppBar(
       backgroundColor: Colors.lightGreen,
       title: const Text('FAM-ILY'),
+      automaticallyImplyLeading: false,
     );
   }
 }

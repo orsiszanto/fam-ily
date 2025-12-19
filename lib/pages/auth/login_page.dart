@@ -1,11 +1,13 @@
-import 'package:familyapp/services/user_service.dart';
+import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
+import 'package:familyapp/cubit/user_cubit/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/dashboard/main_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
-  var emailController = TextEditingController();
-  var passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   LoginScreen({super.key});
 
@@ -18,87 +20,74 @@ class LoginScreen extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Form(
-              autovalidateMode: AutovalidateMode.always,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: emailController,
-                    validator: validateEmail,
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      border: OutlineInputBorder(),
+        child: BlocConsumer<UserBloc, UserState>(
+          listener: (context, state) {
+            if (state is LoggedIn) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("Successful logging in!")));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => Dashboard()),
+              );
+              return;
+            }
+            if (state is FailedAuth) {
+              debugPrint("in failed auth listener");
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            }
+          },
+          builder: (context, state) => state is AuthInProgress
+              ? CircularProgressIndicator()
+              : Column(
+                  children: [
+                    Form(
+                      autovalidateMode: AutovalidateMode.always,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: emailController,
+                            validator: validateEmail,
+                            decoration: InputDecoration(
+                              labelText: "Email",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          SizedBox(height: 26),
+                          TextFormField(
+                            controller: passwordController,
+                            decoration: InputDecoration(
+                              labelText: "Password",
+                              border: OutlineInputBorder(),
+                            ),
+                            obscureText: true,
+                          ),
+                          SizedBox(height: 26),
+                          loginButton(context),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 26),
-                  TextFormField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                  ),
-                  SizedBox(height: 26),
-                  ElevatedButton(
-                    onPressed: () {
-                      String email = emailController.text.trim();
-                      String password = passwordController.text.trim();
-
-                      if (email.isEmpty || password.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Fill out every field!")),
+                    SizedBox(height: 26),
+                    Text('If you have no account, please sign in'),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => RegScreen()),
                         );
-                      } else {
-                        UserService.logIn(email, password)
-                            .then((value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Successful logging in!"),
-                                ),
-                              );
-                              Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => Dashboard(),
-                              )
-                              );
-                            }).catchError((error){
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(error.toString())),
-                              );
-                            });
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.lightGreen,
-                      padding: EdgeInsets.all(8.0),
-                      minimumSize: Size.fromHeight(50),
-                      textStyle: TextStyle(fontSize: 18),
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.lightGreen,
+                        padding: EdgeInsets.all(8.0),
+                        minimumSize: Size.fromHeight(50),
+                        textStyle: TextStyle(fontSize: 18),
+                      ),
+                      child: const Text('Sign in'),
                     ),
-                    child: const Text('Log in'),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 26),
-            Text('If you have no account, please sign in'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => RegScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.lightGreen,
-                padding: EdgeInsets.all(8.0),
-                minimumSize: Size.fromHeight(50),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: const Text('Sign in'),
-            ),
-          ],
+                  ],
+                ),
         ),
       ),
     );
@@ -122,6 +111,28 @@ class LoginScreen extends StatelessWidget {
         ? 'Enter a valid email address'
         : null;
   }
+
+  Widget loginButton(BuildContext context) => ElevatedButton(
+    onPressed: () {
+      String email = emailController.text.trim();
+      String password = passwordController.text.trim();
+
+      if (email.isEmpty || password.isEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Fill out every field!")));
+      } else {
+        context.read<UserBloc>().logIn(email, password);
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.lightGreen,
+      padding: EdgeInsets.all(8.0),
+      minimumSize: Size.fromHeight(50),
+      textStyle: TextStyle(fontSize: 18),
+    ),
+    child: const Text('Log in'),
+  );
 
   AppBar appBar() {
     return AppBar(
