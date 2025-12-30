@@ -1,59 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:familyapp/pages/functions/contacts/new_contact_page.dart';
 
-
-class Contacts extends StatelessWidget {
+class Contacts extends StatefulWidget {
   const Contacts({super.key});
 
+  @override
+  State<Contacts> createState() => _ContactsState();
+}
+
+class _ContactsState extends State<Contacts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: appBar(), body: wholeBody(context));
   }
 
   Widget wholeBody(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
+    return Column(
       children: [
-        _buildGrindItem(context, Icons.checklist_outlined, "New Contact"),
-        _buildGrindItem(context, Icons.contacts_outlined, "Contacts"),
-        const SizedBox(),
+        searchBar(),
+        Expanded(child: Center(child: Text('Ide jönnek majd a kontaktok'))),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: FloatingActionButton(onPressed: () {}, backgroundColor: Colors.lightGreen, child: const Icon(Icons.add)),
+        ),
       ],
     );
   }
 
-  Widget _buildGrindItem(BuildContext context, IconData icon, String label) {
-    return GestureDetector(
-      onTap: () {
-        switch (label) {
-          case "New Contact":
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const NewContact()),
-            );
-            break;
-          case "Contacts":
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const Contacts()),
-            );
-            break;
-          
-          default:
-          break;
-        }
-      },
-      child: Card(
-        margin: EdgeInsets.all(16),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 50, color: Colors.lightGreen),
-              const SizedBox(height: 8),
-              Text(label),
-            ],
-          ),
-        ),
+  Widget searchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SearchAnchor(
+        builder: (BuildContext context, SearchController controller) {
+          return SearchBar(
+            controller: controller,
+            padding: const WidgetStatePropertyAll<EdgeInsets>(
+              EdgeInsets.symmetric(horizontal: 16.0),
+            ),
+            leading: const Icon(Icons.search),
+            hintText: 'Search...',
+            onTap: () => controller.openView(),
+            onChanged: (_) => controller.openView(),
+          );
+        },
+        suggestionsBuilder:
+            (BuildContext context, SearchController controller) {
+              return List<ListTile>.generate(5, (int index) {
+                final item = 'item $index';
+                return ListTile(
+                  title: Text(item),
+                  onTap: () {
+                    setState(() {
+                      controller.closeView(item);
+                    });
+                  },
+                );
+              });
+            },
       ),
     );
   }
@@ -61,7 +63,7 @@ class Contacts extends StatelessWidget {
   AppBar appBar() {
     return AppBar(
       backgroundColor: Colors.lightGreen,
-      title: const Text('FAM-ILY'),
+      title: const Text('Contacts'),
     );
   }
 }
