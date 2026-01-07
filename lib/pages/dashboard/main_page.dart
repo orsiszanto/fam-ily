@@ -1,16 +1,36 @@
+import 'package:familyapp/cubit/user_cubit/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/functions/todo/todo_page.dart';
 import 'package:familyapp/pages/functions/calendar/calendar_page.dart';
 import 'package:familyapp/pages/functions/notes/notes_page.dart';
 import 'package:familyapp/pages/functions/documents/documents_page.dart';
 import 'package:familyapp/pages/functions/contacts/contacts_page.dart';
+import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/pages/auth/auth_page.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
   @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: appBar(), body: wholeBody(context));
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is NotAuthenticated) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const AuthPage()),
+            (route) => false,
+          );
+        }
+      },
+      child: Scaffold(appBar: appBar(), body: wholeBody(context)),
+    );
   }
 
   Widget wholeBody(BuildContext context) {
@@ -65,9 +85,9 @@ class Dashboard extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const Contacts()),
             );
             break;
-          
+
           default:
-          break;
+            break;
         }
       },
       child: Card(
@@ -91,6 +111,12 @@ class Dashboard extends StatelessWidget {
       backgroundColor: Colors.lightGreen,
       title: const Text('FAM-ILY'),
       automaticallyImplyLeading: false,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () => context.read<UserBloc>().signOut(),
+        ),
+      ],
     );
   }
 }

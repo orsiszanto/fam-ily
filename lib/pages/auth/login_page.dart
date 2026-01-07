@@ -26,9 +26,10 @@ class LoginScreen extends StatelessWidget {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text("Successful logging in!")));
-              Navigator.push(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => Dashboard()),
+                (route) => false,
               );
               return;
             }

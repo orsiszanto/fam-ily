@@ -3,31 +3,50 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/services/user_service.dart';
 
-class UserBloc extends Cubit<UserState>  {
+class UserBloc extends Cubit<UserState> {
+  UserBloc() : super(AuthInProgress()) {
+    _init();
+  }
 
-UserBloc(): super(NotAuthenticated());
+  void _init() {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        emit(NotAuthenticated());
+      } else {
+        emit(LoggedIn(user));
+      }
+    });
+  }
 
-void logIn(String email, String password){
-  emit(AuthInProgress());
-  UserService.logIn(email, password).then((userCredentials){
-    emit(LoggedIn(userCredentials));
-  }).catchError((error){
-    if(error is FirebaseAuthException){
-      emit(FailedAuth(error.message ?? "Unknown error occured"));
-    }
-  });
-}
+  void logIn(String email, String password) {
+    emit(AuthInProgress());
+    UserService.logIn(email, password)
+        .then((user) {
+          emit(LoggedIn(user));
+        })
+        .catchError((error) {
+          if (error is FirebaseAuthException) {
+            emit(FailedAuth(error.message ?? "Unknown error occured"));
+          }
+        });
+  }
 
-void signIn(String email, String password){
-  emit(AuthInProgress());
+  void signIn(String email, String password) {
+    emit(AuthInProgress());
 
-  UserService.signUp(email, password).then((userCredentials){
-    emit(RegisterSuccessful(userCredentials));
-  }).catchError((error){
-    if(error is FirebaseAuthException){
-      emit(FailedAuth(error.message ?? "Unknown error occured"));
-    }
-  });
-}
+    UserService.signUp(email, password)
+        .then((user) {
+          emit(RegisterSuccessful(user));
+        })
+        .catchError((error) {
+          if (error is FirebaseAuthException) {
+            emit(FailedAuth(error.message ?? "Unknown error occured"));
+          }
+        });
+  }
 
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    emit(NotAuthenticated());
+  }
 }
