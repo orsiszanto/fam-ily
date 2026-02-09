@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/auth/login_page.dart';
 
-
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
@@ -29,7 +28,7 @@ class _AuthPageState extends State<AuthPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) =>  RegScreen()),
+                  MaterialPageRoute(builder: (_) => RegScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -69,4 +68,3 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 }
-
