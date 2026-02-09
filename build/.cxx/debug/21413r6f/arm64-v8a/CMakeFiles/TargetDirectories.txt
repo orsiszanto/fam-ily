@@ -1,2 +1,0 @@
-/home/orsi/szakdoga/fam-ily/build/.cxx/debug/21413r6f/arm64-v8a/CMakeFiles/edit_cache.dir
-/home/orsi/szakdoga/fam-ily/build/.cxx/debug/21413r6f/arm64-v8a/CMakeFiles/rebuild_cache.dir
