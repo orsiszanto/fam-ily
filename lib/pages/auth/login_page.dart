@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/dashboard/main_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/design/app_button.dart';
+import 'package:familyapp/design/app_bar.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -13,7 +15,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: appBar(), body: wholeBody(context));
+    return Scaffold(
+        appBar: AppBarStyles.subpage(title: 'LOG IN', onBack: () => Navigator.pop(context),)
+        , body: wholeBody(context));
   }
 
   Center wholeBody(BuildContext context) {
@@ -72,20 +76,15 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 26),
                     Text('If you have no account, please sign in'),
-                    ElevatedButton(
+                    AppButton(
+                      text: 'Sign up',
+                      type: ButtonType.inverse,
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => RegScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.lightGreen,
-                        padding: EdgeInsets.all(8.0),
-                        minimumSize: Size.fromHeight(50),
-                        textStyle: TextStyle(fontSize: 18),
-                      ),
-                      child: const Text('Sign in'),
                     ),
                   ],
                 ),
@@ -113,7 +112,9 @@ class LoginScreen extends StatelessWidget {
         : null;
   }
 
-  Widget loginButton(BuildContext context) => ElevatedButton(
+  Widget loginButton(BuildContext context) => AppButton(
+    text: 'Log in',
+    type: ButtonType.inverse,
     onPressed: () {
       String email = emailController.text.trim();
       String password = passwordController.text.trim();
@@ -126,19 +127,5 @@ class LoginScreen extends StatelessWidget {
         context.read<UserBloc>().logIn(email, password);
       }
     },
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.lightGreen,
-      padding: EdgeInsets.all(8.0),
-      minimumSize: Size.fromHeight(50),
-      textStyle: TextStyle(fontSize: 18),
-    ),
-    child: const Text('Log in'),
   );
-
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: Colors.lightGreen,
-      title: const Text('LOG IN'),
-    );
-  }
 }

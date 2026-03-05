@@ -1,4 +1,5 @@
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
+import 'package:familyapp/design/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/functions/todo/todo_page.dart';
 import 'package:familyapp/pages/functions/calendar/calendar_page.dart';
@@ -29,7 +30,10 @@ class _DashboardState extends State<Dashboard> {
           );
         }
       },
-      child: Scaffold(appBar: appBar(), body: wholeBody(context)),
+      child: Scaffold(
+          appBar: AppBarStyles.dashboard(title: 'FAM-ILY',
+              onBack: () => context.read<UserBloc>().signOut()),
+          body: wholeBody(context)),
     );
   }
 
@@ -103,20 +107,6 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: Colors.lightGreen,
-      title: const Text('FAM-ILY'),
-      automaticallyImplyLeading: false,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () => context.read<UserBloc>().signOut(),
-        ),
-      ],
     );
   }
 }
