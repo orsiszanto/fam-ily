@@ -21,17 +21,16 @@ class UserBloc extends Cubit<UserState> {
   void logIn(String email, String password) {
     emit(AuthInProgress());
     UserService.logIn(email, password)
-        .then((user) {
-          emit(LoggedIn(user));
-        })
-        .catchError((error) {
+        .catchError((error){
           if (error is FirebaseAuthException) {
             emit(FailedAuth(error.message ?? "Unknown error occured"));
+          }else{
+            emit(FailedAuth(error.toString()));
           }
         });
   }
 
-  void signIn(String email, String password) {
+  /*void signUp(String email, String password) {
     emit(AuthInProgress());
 
     UserService.signUp(email, password)
@@ -41,8 +40,26 @@ class UserBloc extends Cubit<UserState> {
         .catchError((error) {
           if (error is FirebaseAuthException) {
             emit(FailedAuth(error.message ?? "Unknown error occured"));
+          }else{
+            emit(FailedAuth(error.toString()));
           }
         });
+  }*/
+
+  void signUpWithGroup(String email, String password, String name, bool createNewGroup, String?groupCode){
+    emit(AuthInProgress());
+
+    UserService.signUpWithGroup(email, password, name, createNewGroup, groupCode)
+    .then((user){
+      emit(RegisterSuccessful(user));
+    }).catchError((error){
+      if( error is FirebaseAuthException){
+        emit(FailedAuth((error.message ?? "Unknown error occured"))
+        );
+      }else{
+        emit(FailedAuth(error.toString()));
+      }
+    });
   }
 
   void signOut() {
