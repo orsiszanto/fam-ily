@@ -19,6 +19,7 @@ class RegScreen extends StatefulWidget {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final groupCodeController = TextEditingController();
+    bool isParent = false;
     bool createNewGroup = false;
 
     @override
@@ -94,6 +95,19 @@ class RegScreen extends StatefulWidget {
                           labelText: "Name",
                           border: OutlineInputBorder(),
                         ),
+                      ),
+                      SizedBox(height: AppSpacing.l),
+
+                      CheckboxListTile(
+                          value: isParent,
+                          onChanged: (value){
+                            setState(() {
+                              isParent = value ?? false;
+                            });
+                          },
+                      title: const Text("Szülőként regisztrálok"),
+                        controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
                       ),
                       SizedBox(height: AppSpacing.l),
 
@@ -184,7 +198,7 @@ class RegScreen extends StatefulWidget {
           );
         }
         else {
-          context.read<UserBloc>().signUpWithGroup( email, password, name, createNewGroup, createNewGroup?null:groupCode );
+          context.read<UserBloc>().signUpWithGroup( email, password, name, createNewGroup, createNewGroup?null:groupCode, isParent );
         }
       },
     );

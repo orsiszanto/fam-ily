@@ -13,7 +13,7 @@ class UserService {
     return cred.user!;*/
 
 
-  static Future<User> signUpWithGroup(String email, String password, String name, bool createNewGroup, String?groupCode) async {
+  static Future<User> signUpWithGroup(String email, String password, String name, bool createNewGroup, String?groupCode, bool isParent) async {
 
     if(!createNewGroup){
       final code = (groupCode ?? '').trim();
@@ -40,7 +40,8 @@ class UserService {
         'createdBy': user.uid,
         'createdAt': FieldValue.serverTimestamp(),
         'groupCode' : finalGroupCode,
-        'name' : "$name család"
+        'name' : "$name család",
+        'isParent' : isParent
       });
 
       groupId = groupReference.id;
@@ -62,7 +63,12 @@ class UserService {
       'groupCode' : finalGroupCode,
       'groupId' : groupId,
       'name' : name,
+      'isParent' : isParent,
     });
+
+      await FirebaseFirestore.instance.collection('group').doc(groupId).collection('members').doc(user.uid).set({
+        'userid' : user.uid,
+      });
     return user;
   }catch(e){
       try {
