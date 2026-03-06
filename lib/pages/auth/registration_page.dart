@@ -105,7 +105,7 @@ class RegScreen extends StatefulWidget {
                               isParent = value ?? false;
                             });
                           },
-                      title: const Text("Szülőként regisztrálok"),
+                      title: const Text("Sign up as a Parent"),
                         controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                       ),
@@ -118,7 +118,7 @@ class RegScreen extends StatefulWidget {
                               createNewGroup = value ?? false;
                             });
                           },
-                      title: const Text("Új csoport létrehozása"),
+                      title: const Text("Make a new family group"),
                       controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                       ),
@@ -128,7 +128,7 @@ class RegScreen extends StatefulWidget {
                         TextFormField(
                           controller: groupCodeController,
                           decoration: InputDecoration(
-                            labelText: "Meglévő csoport kód",
+                            labelText: "Existing family group code",
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -173,7 +173,7 @@ class RegScreen extends StatefulWidget {
       final regex = RegExp(pattern);
 
       return value!.isNotEmpty && !regex.hasMatch(value)
-          ? 'Valós e-mail címet írj!'
+          ? 'Please enter a vaild email address!'
           : null;
     }
 
@@ -189,11 +189,11 @@ class RegScreen extends StatefulWidget {
         if ( email.isEmpty || password.isEmpty || name.isEmpty ) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text("Töltsd ki az összes mezőt")));
+          ).showSnackBar(SnackBar(content: Text("You must fill out every field")));
         } else if(!createNewGroup && groupCode.isEmpty){
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text("Ha nem hozol létre új csoportot, be kell lépned egybe!"),
+          ).showSnackBar(SnackBar(content: Text("If you do not make a family group, you have to join one"),
           ),
           );
         }

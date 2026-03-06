@@ -18,7 +18,7 @@ class UserService {
     if(!createNewGroup){
       final code = (groupCode ?? '').trim();
       if(code.isEmpty){
-        throw Exception("Szükséges a család-kód!");
+        throw Exception("You have to enter your family code");
       }
       groupCode = code.toUpperCase();
     }
@@ -40,7 +40,7 @@ class UserService {
         'createdBy': user.uid,
         'createdAt': FieldValue.serverTimestamp(),
         'groupCode' : finalGroupCode,
-        'name' : "$name család",
+        'name' : "$name's Family",
         'isParent' : isParent
       });
 
@@ -49,7 +49,7 @@ class UserService {
       final query = await FirebaseFirestore.instance.collection('group').where('groupCode', isEqualTo: groupCode).limit(1).get();
 
       if(query.docs.isEmpty){
-        throw Exception("Ez a kód nem létezik!");
+        throw Exception("This family code does not exist");
       }
 
       final doc = query.docs.first;
