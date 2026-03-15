@@ -59,4 +59,45 @@ class AppBarStyles{
     );
   }
 
+  static AppBar functions ({
+    required String title,
+    required VoidCallback onBack
+  }){
+    return AppBar(
+      backgroundColor: AppColors.primary,
+      leading: IconButton(
+          onPressed: onBack,
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary,)
+      ),
+      centerTitle: true,
+      title:Text(
+        title,
+        style:
+        AppTextStyles.headline1.copyWith(color: AppColors.textPrimary),
+      ),
+      elevation: 2,
+    );
+  }
+
+  static AppBar functionsNewEdit ({
+    required String title,
+    required VoidCallback onBack,
+    List<Widget>? actions
+  }){
+    return AppBar(
+      backgroundColor: AppColors.primary,
+      actions: actions,
+      leading: IconButton(
+          onPressed: onBack,
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary,)
+      ),
+      centerTitle: true,
+      title:Text(
+        title,
+        style:
+        AppTextStyles.headline1.copyWith(color: AppColors.textPrimary),
+      ),
+      elevation: 2,
+    );
+  }
 }

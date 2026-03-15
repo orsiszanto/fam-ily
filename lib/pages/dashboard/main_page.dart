@@ -1,5 +1,8 @@
+import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
 import 'package:familyapp/design/app_bar.dart';
+import 'package:familyapp/services/note_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/functions/todo/todo_page.dart';
 import 'package:familyapp/pages/functions/calendar/calendar_page.dart';
@@ -72,7 +75,14 @@ class _DashboardState extends State<Dashboard> {
           case "Notes":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Notes()),
+              MaterialPageRoute(builder: (_) => BlocProvider(
+                  create: (_) => NoteBloc(NoteService()),
+              child: Notes(
+                groupId : currentGroup!,
+                createdBy: FirebaseAuth.instance.currentUser!.uid,
+                  ),
+                ),
+              ),
             );
             break;
 

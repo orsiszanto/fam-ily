@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'colors.dart';
+import 'package:familyapp/design/colors.dart';
 
 class AppTextStyles{
   static const TextStyle appBar = TextStyle(

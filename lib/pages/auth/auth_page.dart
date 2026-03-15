@@ -3,6 +3,7 @@ import 'package:familyapp/pages/auth/registration_page.dart';
 import 'package:familyapp/pages/auth/login_page.dart';
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/app_bar.dart';
+import 'package:familyapp/design/spacing.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -27,7 +28,7 @@ class _AuthPageState extends State<AuthPage> {
           const Text('Organise everything'),
           SizedBox(height: 26),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(AppSpacing.s),
             child: AppButton(
               text: 'Sign up',
               type: ButtonType.primary,
@@ -39,7 +40,7 @@ class _AuthPageState extends State<AuthPage> {
               },
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: AppSpacing.m),
           AppButton(
             text: 'Log in',
             type: ButtonType.primary,

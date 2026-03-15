@@ -1,26 +1,151 @@
+import 'package:familyapp/cubit/note_cubit/note_state.dart';
+import 'package:familyapp/design/colors.dart';
+import 'package:familyapp/design/spacing.dart';
+import 'package:familyapp/pages/functions/notes/note_create.dart';
 import 'package:flutter/material.dart';
+import 'package:familyapp/design/app_searchBar.dart';
+import 'package:familyapp/design/app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
+import 'package:familyapp/design/app_card.dart';
+import 'package:familyapp/pages/functions/notes/note_viewedit.dart';
 
 class Notes extends StatefulWidget {
-  const Notes({super.key});
+  final String createdBy;
+  final String groupId;
+
+  const Notes({
+    required this.createdBy,
+    required this.groupId,
+    super.key,
+});
 
   @override
   State<Notes> createState() => _NotesState();
 }
 
 class _NotesState extends State<Notes> {
+  final titleController = TextEditingController();
+  String searchQuery = "";
+  late NoteBloc _noteBloc;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _noteBloc = context.read<NoteBloc>();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _noteBloc.loadNotes(groupId: widget.groupId);
+    });
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: appBar(), body: wholeBody(context));
+    return Scaffold(
+      appBar: AppBarStyles.functions(
+        title: 'NOTES',
+        onBack: () => Navigator.pop(context),
+      ),
+      body: wholeBody(context),
+    );
   }
 
   Widget wholeBody(BuildContext context) {
     return Column(
       children: [
         searchBar(),
-        Expanded(child: Center(child: Text('Ide jönnek majd a jegyzetek'))),
+        Expanded(
+          child: BlocBuilder<NoteBloc, NoteState>(
+            builder: (context, state) {
+              if (state is NoteLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is NotesLoaded) {
+                final filteredNotes = state.notes.where((note) {
+                  return note.title.toLowerCase().contains(searchQuery);
+                }).toList();
+
+                if (filteredNotes.isEmpty) {
+                  return const Center(child: Text('No notes'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
+                  itemCount: filteredNotes.length,
+                  itemBuilder: (context, index) {
+                    final note = filteredNotes[index];
+                    return AppCardStyles.noteList(
+                      title: note.title,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: _noteBloc,
+                              child: NoteViewEdit(
+                                note: note,
+                                groupId: widget.groupId,
+                                updatedBy: widget.createdBy,
+                              ),
+                            ),
+                          ),
+                        ).then((_) {
+                          if (mounted) {
+                            _noteBloc.loadNotes(groupId: widget.groupId);
+                          }
+                        });
+                      },
+                    );
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: FloatingActionButton(onPressed: () {}, backgroundColor: Colors.lightGreen, child: const Icon(Icons.add)),
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: FloatingActionButton(
+            onPressed: () {
+              final uid = FirebaseAuth.instance.currentUser?.uid;
+              if (currentGroup == null || uid == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('User or group not found')),
+                );
+                return;
+              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: _noteBloc,
+                    child: NoteCreate(
+                      groupId: widget.groupId,
+                      createdBy: widget.createdBy,
+                    ),
+                  ),
+                ),
+              ).then((_) {
+                if (mounted) {
+                  _noteBloc.loadNotes(groupId: widget.groupId);
+                }
+              });
+            },
+            backgroundColor: AppColors.primary,
+            child: const Icon(Icons.add),
+          ),
         ),
       ],
     );
@@ -28,42 +153,17 @@ class _NotesState extends State<Notes> {
 
   Widget searchBar() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SearchAnchor(
-        builder: (BuildContext context, SearchController controller) {
-          return SearchBar(
-            controller: controller,
-            padding: const WidgetStatePropertyAll<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 16.0),
-            ),
-            leading: const Icon(Icons.search),
-            hintText: 'Search...',
-            onTap: () => controller.openView(),
-            onChanged: (_) => controller.openView(),
-          );
+      padding: const EdgeInsets.all(AppSpacing.s),
+      child: AppSearchbar(
+        hintText: 'Search...',
+        controller: titleController,
+        type: SearchbarType.secondary,
+        onChanged: (value) {
+          setState(() {
+            searchQuery = value.toLowerCase();
+          });
         },
-        suggestionsBuilder:
-            (BuildContext context, SearchController controller) {
-              return List<ListTile>.generate(5, (int index) {
-                final item = 'item $index';
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    setState(() {
-                      controller.closeView(item);
-                    });
-                  },
-                );
-              });
-            },
       ),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      backgroundColor: Colors.lightGreen,
-      title: const Text('Notes'),
     );
   }
 }

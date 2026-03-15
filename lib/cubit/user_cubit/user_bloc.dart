@@ -3,34 +3,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/services/user_service.dart';
 
+String? currentGroup;
+
 class UserBloc extends Cubit<UserState> {
   UserBloc() : super(AuthInProgress()) {
     _init();
   }
 
   void _init() {
-    FirebaseAuth.instance.authStateChanges().listen((user) {
+    FirebaseAuth.instance.authStateChanges().listen((user) async{
       if (user == null) {
+        currentGroup = null;
         emit(NotAuthenticated());
       } else {
+        currentGroup = await UserService.getGroupIdByUserId(user.uid);
         emit(LoggedIn(user));
       }
     });
   }
 
-  void logIn(String email, String password) {
+  void logIn(String email, String password) async {
     emit(AuthInProgress());
-    UserService.logIn(email, password)
-    .then((user){
+    try{
+      final user = await UserService.logIn(email, password);
+      currentGroup =  await UserService.getGroupIdByUserId(user.uid);
       emit(LoggedIn(user));
-    })
-        .catchError((error){
+    }catch(error){
           if (error is FirebaseAuthException) {
             emit(FailedAuth(error.message ?? "Unknown error occured"));
           }else{
             emit(FailedAuth(error.toString()));
           }
-        });
+    }
   }
 
   void signUpWithGroup(String email, String password, String name, bool createNewGroup, String?groupCode, bool isParent){

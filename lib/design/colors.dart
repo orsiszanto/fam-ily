@@ -8,5 +8,6 @@ class AppColors{
   static const textSecondary = Color(0XFF555555);
 
   static const bgLightGray = Color(0xFFF1F0F2);
+  static const shadow = Color(0xFFB3B2B2);
 
 }

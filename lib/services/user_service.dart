@@ -1,18 +1,9 @@
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class UserService {
- /* static Future<User> signUp(String email, String password) async {
-    final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return cred.user!;*/
-
-
   static Future<User> signUpWithGroup(String email, String password, String name, bool createNewGroup, String?groupCode, bool isParent) async {
 
     if(!createNewGroup){
@@ -41,7 +32,6 @@ class UserService {
         'createdAt': FieldValue.serverTimestamp(),
         'groupCode' : finalGroupCode,
         'name' : "$name's Family",
-        'isParent' : isParent
       });
 
       groupId = groupReference.id;
@@ -90,5 +80,17 @@ class UserService {
       password: password,
     );
     return cred.user!;
+  }
+  
+  static Future<String> getGroupIdByUserId(String uid) async{
+    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final data = doc.data()!;
+    final groupId = data['groupId'];
+
+    if(groupId == null || groupId.toString().isEmpty){
+      throw Exception("GroupId not found");
+    }
+
+    return groupId.toString();
   }
 }
