@@ -1,4 +1,5 @@
 import 'package:familyapp/cubit/note_cubit/note_state.dart';
+import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/spacing.dart';
 import 'package:familyapp/pages/functions/notes/note_create.dart';
@@ -51,6 +52,39 @@ class _NotesState extends State<Notes> {
     super.dispose();
   }
 
+  Future<bool> _confirmDelete(String noteTitle)async{
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext){
+        return AlertDialog(
+          title: const Text('Delete note'),
+          content: Text('Are you sure you want to delete $noteTitle note?'),
+          actions: [
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
+            child:
+              Row(
+                children: [
+                  AppButton(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                  type: ButtonType.dialogCancel,
+                  ),
+                  SizedBox(width: AppSpacing.xl,),
+                  AppButton(
+                      text: 'Delete',
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                    type: ButtonType.dialogSave,
+                  ),
+                ],
+              ))
+          ],
+        );
+      }
+    );
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +112,11 @@ class _NotesState extends State<Notes> {
                 }).toList();
 
                 if (filteredNotes.isEmpty) {
-                  return const Center(child: Text('No notes'));
+                  return Center(
+                      child: Text(
+                          searchQuery.isEmpty ? 'No notes' : 'No matching notes',
+                      )
+                  );
                 }
 
                 return ListView.builder(
@@ -86,27 +124,47 @@ class _NotesState extends State<Notes> {
                   itemCount: filteredNotes.length,
                   itemBuilder: (context, index) {
                     final note = filteredNotes[index];
-                    return AppCardStyles.noteList(
-                      title: note.title,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: _noteBloc,
-                              child: NoteViewEdit(
-                                note: note,
-                                groupId: widget.groupId,
-                                updatedBy: widget.createdBy,
-                              ),
-                            ),
-                          ),
-                        ).then((_) {
-                          if (mounted) {
-                            _noteBloc.loadNotes(groupId: widget.groupId);
-                          }
-                        });
+
+                    return Dismissible(
+                        key: ValueKey(note.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(color: AppColors.alert),
+                        confirmDismiss: (_) async{
+                          return await _confirmDelete(note.title);
+                        },
+                      onDismissed: (_){
+                          _noteBloc.deleteNote(
+                              groupId: widget.groupId,
+                              noteId: note.id,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${note.title} note deleted!'),
+                            )
+                          );
                       },
+                        child: AppCardStyles.noteList(
+                          title: note.title,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: _noteBloc,
+                                  child: NoteViewEdit(
+                                    note: note,
+                                    groupId: widget.groupId,
+                                    updatedBy: widget.createdBy,
+                                  ),
+                                ),
+                              ),
+                            ).then((_) {
+                              if (mounted) {
+                                _noteBloc.loadNotes(groupId: widget.groupId);
+                              }
+                            });
+                          },
+                        ),
                     );
                   },
                 );

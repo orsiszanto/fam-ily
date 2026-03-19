@@ -1,7 +1,6 @@
-import 'package:familyapp/cubit/note_cubit/note_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_state.dart';
 import 'package:familyapp/services/note_service.dart';
-
 
 class NoteBloc extends Cubit<NoteState>{
   final NoteService _noteService;
@@ -41,8 +40,9 @@ class NoteBloc extends Cubit<NoteState>{
         noteId: noteId,
         title: title,
         content: content,
-        updatedBy: updatedBy,).then((_){
-          emit(NoteUpdated());
+        updatedBy: updatedBy,
+    ).then((_){
+        emit(NoteUpdated());
     }).catchError((error){
       emit(NoteError(error.toString()));
     });
@@ -53,12 +53,28 @@ class NoteBloc extends Cubit<NoteState>{
 }){
     emit(NoteLoading());
 
-    _noteService.getNotes(groupId: groupId).then((notes){
+    _noteService.getNotes(
+        groupId: groupId
+    ).then((notes){
       emit(NotesLoaded(notes));
     }).catchError((error){
       emit(NoteError(error.toString()));
     });
   }
 
-
+void deleteNote({
+    required String groupId,
+  required String noteId,
+}){
+  emit(NoteLoading());
+  _noteService.deleteNote(
+      groupId: groupId,
+      noteId: noteId,
+  ).then((_){
+    emit(NoteDeleted());
+    loadNotes(groupId: groupId);
+  }).catchError((error){
+    emit(NoteError(error.toString()));
+  });
+}
 }

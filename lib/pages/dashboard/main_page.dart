@@ -1,6 +1,8 @@
+import 'package:familyapp/cubit/contact_cubit/contact_bloc.dart';
 import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
 import 'package:familyapp/design/app_bar.dart';
+import 'package:familyapp/services/contact_service.dart';
 import 'package:familyapp/services/note_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -96,11 +98,14 @@ class _DashboardState extends State<Dashboard> {
           case "Contacts":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Contacts()),
+              MaterialPageRoute(builder: (_) => BlocProvider(
+                  create: (_) => ContactBloc(ContactService()),
+              child: Contacts(
+                  groupId: currentGroup!,
+                  ),
+                ),
+              ),
             );
-            break;
-
-          default:
             break;
         }
       },

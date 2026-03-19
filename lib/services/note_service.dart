@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../model/note_model.dart';
+import 'package:familyapp/model/note_model.dart';
 
 class NoteService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -67,5 +66,13 @@ class NoteService {
       'updatedBy': updatedBy,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  Future <void> deleteNote({
+    required String groupId,
+    required String noteId,
+  })async{
+    final noteDoc = _firestore.collection('group').doc(groupId).collection('notes').doc(noteId);
+    await noteDoc.delete();
   }
 }

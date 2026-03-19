@@ -10,6 +10,8 @@ class NoteLoading extends NoteState {}
 
 class NoteUpdated extends NoteState {}
 
+class NoteDeleted extends NoteState {}
+
 class NoteError extends NoteState{
   final String message;
   NoteError(this.message);

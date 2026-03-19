@@ -6,18 +6,23 @@ enum ButtonType{
   primary,
   secondary,
   inverse,
+  dialogSave,
+  dialogCancel,
+  dialogDelete,
 }
 
 class AppButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final ButtonType type;
+  final bool isLoading;
 
   const AppButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.type = ButtonType.primary,
+    this.isLoading = false,
 });
 
   @override
@@ -43,6 +48,27 @@ class AppButton extends StatelessWidget {
         height = 60;
         textStyle = AppTextStyles.headline3;
         break;
+      case ButtonType.dialogSave:
+        backgroundColor = AppColors.primary;
+        textColor = Colors.white;
+        width = 100;
+        height = 60;
+        textStyle = AppTextStyles.headline2;
+        break;
+      case ButtonType.dialogCancel:
+        backgroundColor = Colors.white;
+        textColor = AppColors.textPrimary;
+        width = 100;
+        height = 60;
+        textStyle = AppTextStyles.headline2;
+        break;
+      case ButtonType.dialogDelete:
+        backgroundColor = AppColors.alert;
+        textColor = AppColors.textPrimary;
+        width = 100;
+        height = 60;
+        textStyle = AppTextStyles.headline2;
+        break;
       default:
         backgroundColor = AppColors.primary;
         textColor = Colors.white;
@@ -64,8 +90,17 @@ class AppButton extends StatelessWidget {
         ),
         minimumSize: Size(width, height),
       ),
-        onPressed: onPressed,
-        child: Text(
+        onPressed: isLoading ? null : onPressed,
+        child: isLoading ?
+        SizedBox(
+          height: 18,
+          width: 18,
+          child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: textColor,
+        ),
+        )
+        : Text(
             text,
             style: textStyle.copyWith(color: textColor),
         ),
