@@ -41,7 +41,8 @@ class AppBarStyles{
 
   static AppBar dashboard ({
     required String title,
-    required VoidCallback onBack
+    required VoidCallback onBack,
+    required VoidCallback onProfile,
   }){
     return AppBar(
       backgroundColor: AppColors.primary,
@@ -56,6 +57,12 @@ class AppBarStyles{
         AppTextStyles.headline1.copyWith(color: AppColors.textPrimary),
       ),
       elevation: 2,
+      actions: [
+        IconButton(
+          onPressed: onProfile,
+          icon: const Icon(Icons.settings, color: AppColors.textPrimary,),
+        )
+      ],
     );
   }
 

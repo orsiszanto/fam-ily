@@ -54,4 +54,28 @@ class AppCardStyles {
     );
   }
 
+  static Card todoList({
+    required String title,
+    required VoidCallback onTap
+  }){
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(top: AppSpacing.m),
+      child: ListTile(
+        onTap: onTap,
+        title: Text(
+          title,
+          style: AppTextStyles.headline3.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: const Icon(
+          Icons.chevron_right,
+          color: AppColors.textSecondary,
+        ),
+      ),
+    );
+  }
+
 }

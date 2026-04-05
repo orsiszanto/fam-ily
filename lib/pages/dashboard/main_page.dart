@@ -1,19 +1,32 @@
+import 'package:familyapp/cubit/todo_cubit/todo_bloc.dart';
+import 'package:familyapp/services/todo_service.dart';
+import 'package:flutter/material.dart';
+//design
+import 'package:familyapp/design/app_bar.dart';
+
+//firebase
+import 'package:firebase_auth/firebase_auth.dart';
+
+//cubit
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
 import 'package:familyapp/cubit/contact_cubit/contact_bloc.dart';
 import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
-import 'package:familyapp/design/app_bar.dart';
-import 'package:familyapp/services/contact_service.dart';
-import 'package:familyapp/services/note_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+
+//pages
+import 'package:familyapp/pages/user/profile_page.dart';
 import 'package:familyapp/pages/functions/todo/todo_page.dart';
 import 'package:familyapp/pages/functions/calendar/calendar_page.dart';
 import 'package:familyapp/pages/functions/notes/notes_page.dart';
 import 'package:familyapp/pages/functions/documents/documents_page.dart';
 import 'package:familyapp/pages/functions/contacts/contacts_page.dart';
-import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/pages/auth/auth_page.dart';
+
+//services
+import 'package:familyapp/services/contact_service.dart';
+import 'package:familyapp/services/note_service.dart';
+
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -37,7 +50,11 @@ class _DashboardState extends State<Dashboard> {
       },
       child: Scaffold(
           appBar: AppBarStyles.dashboard(title: 'FAM-ILY',
-              onBack: () => context.read<UserBloc>().signOut()),
+              onBack: () => context.read<UserBloc>().signOut(),
+            onProfile: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ProfilePage())),
+          ),
           body: wholeBody(context)),
     );
   }
@@ -63,7 +80,14 @@ class _DashboardState extends State<Dashboard> {
           case "ToDo List":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Todo()),
+              MaterialPageRoute(builder: (_) => BlocProvider(
+                  create: (_) => TodoBloc(TodoService()),
+              child:Todo(
+                groupId: currentGroup!,
+                createdBy: FirebaseAuth.instance.currentUser!.uid,
+                updatedBy: '',
+              )
+              )),
             );
             break;
 

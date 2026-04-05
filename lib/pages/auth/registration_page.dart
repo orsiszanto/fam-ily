@@ -178,7 +178,7 @@ class RegScreen extends StatefulWidget {
     }
 
     Widget signupButton(BuildContext context) => AppButton(
-      text: 'sign up',
+      text: 'Sign up',
       type: ButtonType.inverse,
       onPressed: () {
         final email = emailController.text.trim();

@@ -1,11 +1,16 @@
-import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
-import 'package:familyapp/cubit/note_cubit/note_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+//design
 import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/spacing.dart';
-import 'package:familyapp/model/note_model.dart';
 import 'package:familyapp/design/app_bar.dart';
+
+//cubit
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_state.dart';
+
+//note model
+import 'package:familyapp/model/note_model.dart';
 
 class NoteViewEdit extends StatefulWidget {
   final Note note;
@@ -102,6 +107,7 @@ class _NoteViewEditState extends State<NoteViewEdit> {
           ),
           enabled: !isLoading,
         ),
+        Divider(),
         const SizedBox(height: AppSpacing.m),
         Expanded(
           child: TextField(

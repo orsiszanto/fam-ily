@@ -1,17 +1,24 @@
-import 'package:familyapp/cubit/note_cubit/note_state.dart';
+import 'package:flutter/material.dart';
+//design
+import 'package:familyapp/design/app_searchBar.dart';
+import 'package:familyapp/design/app_bar.dart';
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/spacing.dart';
-import 'package:familyapp/pages/functions/notes/note_create.dart';
-import 'package:flutter/material.dart';
-import 'package:familyapp/design/app_searchBar.dart';
-import 'package:familyapp/design/app_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
 import 'package:familyapp/design/app_card.dart';
+
+//firebase
+import 'package:firebase_auth/firebase_auth.dart';
+
+//cubit
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_state.dart';
+import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
+
+//notes pages
 import 'package:familyapp/pages/functions/notes/note_viewedit.dart';
+import 'package:familyapp/pages/functions/notes/note_create.dart';
 
 class Notes extends StatefulWidget {
   final String createdBy;

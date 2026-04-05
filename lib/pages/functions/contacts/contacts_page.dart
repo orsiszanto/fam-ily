@@ -1,15 +1,22 @@
-import 'package:familyapp/cubit/contact_cubit/contact_bloc.dart';
-import 'package:familyapp/cubit/contact_cubit/contact_state.dart';
-import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
+import 'package:flutter/material.dart';
+//design
 import 'package:familyapp/design/app_bar.dart';
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/app_card.dart';
 import 'package:familyapp/design/app_searchBar.dart';
 import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/spacing.dart';
+
+//firebase
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+
+//cubit
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
+import 'package:familyapp/cubit/contact_cubit/contact_bloc.dart';
+import 'package:familyapp/cubit/contact_cubit/contact_state.dart';
+
+//Contacts pages
 import 'package:familyapp/pages/functions/contacts/contact_dialog.dart';
 
 class Contacts extends StatefulWidget {

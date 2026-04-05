@@ -1,10 +1,15 @@
+import 'package:flutter/material.dart';
+//design
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/spacing.dart';
+
+//cubit
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/cubit/contact_cubit/contact_bloc.dart';
 import 'package:familyapp/cubit/contact_cubit/contact_state.dart';
+
+//Contact model
 import 'package:familyapp/model/contact_model.dart';
-import 'package:flutter/material.dart';
 
 class ContactDialog extends StatefulWidget {
   final String groupId;
@@ -80,7 +85,7 @@ class _ContactDialogState extends State<ContactDialog> {
             final isLoading = state is ContactLoading;
 
             return AlertDialog(
-              title: Text(widget.isEdit ? 'Edit Contact' : 'New Contasct'),
+              title: Text(widget.isEdit ? 'Edit Contact' : 'New Contact'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

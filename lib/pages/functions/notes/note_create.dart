@@ -1,21 +1,19 @@
-import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
-import 'package:familyapp/cubit/note_cubit/note_state.dart';
+import 'package:flutter/material.dart';
+//design
 import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/spacing.dart';
-import 'package:flutter/material.dart';
 import 'package:familyapp/design/app_bar.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
+//cubit
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
+import 'package:familyapp/cubit/note_cubit/note_state.dart';
 
 class NoteCreate extends StatefulWidget {
   final String groupId;
   final String createdBy;
 
-  const NoteCreate({
-    super.key,
-  required this.groupId,
-  required this.createdBy
-  });
+  const NoteCreate({super.key, required this.groupId, required this.createdBy});
 
   @override
   State<NoteCreate> createState() => _NoteCreateState();
@@ -26,7 +24,7 @@ class _NoteCreateState extends State<NoteCreate> {
   final contentController = TextEditingController();
 
   @override
-  void dispose(){
+  void dispose() {
     titleController.dispose();
     contentController.dispose();
     super.dispose();
@@ -49,32 +47,36 @@ class _NoteCreateState extends State<NoteCreate> {
     return BlocListener<NoteBloc, NoteState>(
       listener: (context, state) {
         if (state is NoteCreated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Note saved")),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Note saved")));
           Navigator.pop(context);
-        }else if (state is NoteError){
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+        } else if (state is NoteError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
-    child: Scaffold(
-      appBar: AppBarStyles.functionsNewEdit(
-        title: 'NEW NOTE',
-        onBack: () => Navigator.pop(context),
-      actions: [
-        IconButton(
-            onPressed: _saveNote,
-            icon: const Icon(Icons.save_as_outlined, color: AppColors.textPrimary,)
+      child: Scaffold(
+        appBar: AppBarStyles.functionsNewEdit(
+          title: 'NEW NOTE',
+          onBack: () => Navigator.pop(context),
+          actions: [
+            IconButton(
+              onPressed: _saveNote,
+              icon: const Icon(
+                Icons.save_as_outlined,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
         ),
-      ],
+        body: wholeBody(context),
       ),
-      body: wholeBody(context),),
     );
   }
 
-  Widget wholeBody (BuildContext context){
+  Widget wholeBody(BuildContext context) {
     final state = context.watch<NoteBloc>().state;
     final isLoading = state is NoteLoading;
 
@@ -86,12 +88,10 @@ class _NoteCreateState extends State<NoteCreate> {
             hintText: "Title",
             border: InputBorder.none,
           ),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           enabled: !isLoading,
         ),
+        Divider(),
         const SizedBox(height: AppSpacing.m),
         Expanded(
           child: TextField(
@@ -107,15 +107,12 @@ class _NoteCreateState extends State<NoteCreate> {
             enabled: !isLoading,
           ),
         ),
-        if(isLoading)
+        if (isLoading)
           const Padding(
-          padding: EdgeInsets.only(top: AppSpacing.m),
-          child: CircularProgressIndicator(),
+            padding: EdgeInsets.only(top: AppSpacing.m),
+            child: CircularProgressIndicator(),
           ),
       ],
     );
   }
-
 }
-
-
