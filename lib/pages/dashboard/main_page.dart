@@ -50,12 +50,13 @@ class _DashboardState extends State<Dashboard> {
       },
       child: Scaffold(
           appBar: AppBarStyles.dashboard(title: 'FAM-ILY',
-              onBack: () => context.read<UserBloc>().signOut(),
+
             onProfile: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const ProfilePage())),
           ),
-          body: wholeBody(context)),
+          body: wholeBody(context)
+      ),
     );
   }
 

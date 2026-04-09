@@ -41,14 +41,13 @@ class AppBarStyles{
 
   static AppBar dashboard ({
     required String title,
-    required VoidCallback onBack,
     required VoidCallback onProfile,
   }){
     return AppBar(
       backgroundColor: AppColors.primary,
       leading: IconButton(
-          onPressed: onBack,
-          icon: const Icon(Icons.logout, color: AppColors.textPrimary,),
+        onPressed: onProfile,
+        icon: const Icon(Icons.settings, color: AppColors.textPrimary,),
       ),
       centerTitle: true,
       title:Text(
@@ -57,12 +56,6 @@ class AppBarStyles{
         AppTextStyles.headline1.copyWith(color: AppColors.textPrimary),
       ),
       elevation: 2,
-      actions: [
-        IconButton(
-          onPressed: onProfile,
-          icon: const Icon(Icons.settings, color: AppColors.textPrimary,),
-        )
-      ],
     );
   }
 
