@@ -4,7 +4,7 @@ abstract class NoteState {}
 
 class NoteInitial extends NoteState {}
 
-class NoteCreated extends NoteState{}
+class NoteCreated extends NoteState {}
 
 class NoteLoading extends NoteState {}
 
@@ -12,12 +12,12 @@ class NoteUpdated extends NoteState {}
 
 class NoteDeleted extends NoteState {}
 
-class NoteError extends NoteState{
+class NoteError extends NoteState {
   final String message;
   NoteError(this.message);
 }
 
-class NotesLoaded extends NoteState{
+class NotesLoaded extends NoteState {
   final List<Note> notes;
   NotesLoaded(this.notes);
 }

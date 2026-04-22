@@ -11,10 +11,11 @@ class Note {
 
   Note({
     required this.id,
-  required this.title,
-  required this.content,
-  required this.createdBy,
-  required this.createdAt,
-  required this.updatedBy,
-  required this.updatedAt,});
+    required this.title,
+    required this.content,
+    required this.createdBy,
+    required this.createdAt,
+    required this.updatedBy,
+    required this.updatedAt,
+  });
 }

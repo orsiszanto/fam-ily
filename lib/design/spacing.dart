@@ -1,4 +1,3 @@
-
 class AppSpacing {
   static const xs = 4.0;
   static const s = 8.0;

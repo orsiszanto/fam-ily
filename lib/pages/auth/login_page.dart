@@ -16,8 +16,12 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarStyles.subpage(title: 'LOG IN', onBack: () => Navigator.pop(context),)
-        , body: wholeBody(context));
+      appBar: AppBarStyles.subpage(
+        title: 'LOG IN',
+        onBack: () => Navigator.pop(context),
+      ),
+      body: wholeBody(context),
+    );
   }
 
   Center wholeBody(BuildContext context) {

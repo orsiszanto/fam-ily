@@ -3,13 +3,8 @@ import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/text_styles.dart';
 import 'package:familyapp/design/spacing.dart';
 
-
 class AppCardStyles {
-
-  static Card noteList({
-    required String title,
-    required VoidCallback onTap
-}){
+  static Card noteList({required String title, required VoidCallback onTap}) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(top: AppSpacing.m),
@@ -24,16 +19,13 @@ class AppCardStyles {
         ),
         trailing: const Icon(
           Icons.chevron_right,
-        color: AppColors.textSecondary,
-      ),
+          color: AppColors.textSecondary,
+        ),
       ),
     );
   }
 
-  static Card contactList({
-    required String name,
-    required VoidCallback onTap
-  }){
+  static Card contactList({required String name, required VoidCallback onTap}) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(top: AppSpacing.m),
@@ -54,10 +46,7 @@ class AppCardStyles {
     );
   }
 
-  static Card todoList({
-    required String title,
-    required VoidCallback onTap
-  }){
+  static Card todoList({required String title, required VoidCallback onTap}) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(top: AppSpacing.m),
@@ -77,5 +66,4 @@ class AppCardStyles {
       ),
     );
   }
-
 }

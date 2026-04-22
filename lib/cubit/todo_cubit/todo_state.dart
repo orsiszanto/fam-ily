@@ -54,4 +54,3 @@ class TodoError extends TodoState {
   final String message;
   TodoError(this.message);
 }
-

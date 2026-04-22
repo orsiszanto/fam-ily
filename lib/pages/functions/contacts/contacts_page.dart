@@ -22,10 +22,7 @@ import 'package:familyapp/pages/functions/contacts/contact_dialog.dart';
 class Contacts extends StatefulWidget {
   final String groupId;
 
-  const Contacts({
-    required this.groupId,
-    super.key,
-});
+  const Contacts({required this.groupId, super.key});
 
   @override
   State<Contacts> createState() => _ContactsState();
@@ -58,39 +55,44 @@ class _ContactsState extends State<Contacts> {
     super.dispose();
   }
 
-  Future<bool> _confirmDelete(String contactName)async{
+  Future<bool> _confirmDelete(String contactName) async {
     final result = await showDialog<bool>(
-        context: context,
-        builder: (dialogContext){
-          return AlertDialog(
-            title: const Text('Delete contact'),
-            content: Text('Are you sure you want to delete $contactName contact?'),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
-                child:
-                Row(
-                  children: [
-                    AppButton(
-                      text: 'Cancel',
-                      onPressed: () => Navigator.pop(dialogContext, false),
-                      type: ButtonType.dialogCancel,
-                    ),
-                    const SizedBox(width: AppSpacing.xl,),
-                    AppButton(
-                      text: 'Delete',
-                      onPressed: () => Navigator.pop(dialogContext, true),
-                      type: ButtonType.dialogDelete,
-                    ),
-                  ],
-                ),
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete contact'),
+          content: Text(
+            'Are you sure you want to delete $contactName contact?',
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xs,
+                vertical: AppSpacing.xs,
               ),
-            ],
-          );
-        },
+              child: Row(
+                children: [
+                  AppButton(
+                    text: 'Cancel',
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                    type: ButtonType.dialogCancel,
+                  ),
+                  const SizedBox(width: AppSpacing.xl),
+                  AppButton(
+                    text: 'Delete',
+                    onPressed: () => Navigator.pop(dialogContext, true),
+                    type: ButtonType.dialogDelete,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
     return result ?? false;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,9 +121,11 @@ class _ContactsState extends State<Contacts> {
 
                 if (filteredContacts.isEmpty) {
                   return Center(
-                      child: Text(
-                          searchQuery.isEmpty ? 'No contacts' : 'No matching contacts',
-                      )
+                    child: Text(
+                      searchQuery.isEmpty
+                          ? 'No contacts'
+                          : 'No matching contacts',
+                    ),
                   );
                 }
 
@@ -133,37 +137,37 @@ class _ContactsState extends State<Contacts> {
 
                     return Dismissible(
                       key: ValueKey(contact.id),
-                      direction:  DismissDirection.endToStart,
+                      direction: DismissDirection.endToStart,
                       background: Container(color: AppColors.alert),
-                      confirmDismiss: (_) async{
-                          return await _confirmDelete(contact.name);
+                      confirmDismiss: (_) async {
+                        return await _confirmDelete(contact.name);
                       },
-                      onDismissed: (_){
-                          _contactBloc.deleteContact(
-                              groupId: widget.groupId,
-                              contactId: contact.id,
-                          );
+                      onDismissed: (_) {
+                        _contactBloc.deleteContact(
+                          groupId: widget.groupId,
+                          contactId: contact.id,
+                        );
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('${contact.name} contact deleted!'),
-                            )
-                          );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${contact.name} contact deleted!'),
+                          ),
+                        );
                       },
                       child: AppCardStyles.contactList(
                         name: contact.name,
-                        onTap: () async{
+                        onTap: () async {
                           await showDialog(
-                              context: context,
-                              builder: (_) => BlocProvider.value(
-                                  value: _contactBloc,
+                            context: context,
+                            builder: (_) => BlocProvider.value(
+                              value: _contactBloc,
                               child: ContactDialog(
-                                  groupId: widget.groupId,
-                              contact: contact,
+                                groupId: widget.groupId,
+                                contact: contact,
                               ),
-                              ),
+                            ),
                           );
-                          if(!mounted) return;
+                          if (!mounted) return;
                           _contactBloc.loadContacts(groupId: widget.groupId);
                         },
                       ),
@@ -178,7 +182,7 @@ class _ContactsState extends State<Contacts> {
         Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: FloatingActionButton(
-            onPressed: () async{
+            onPressed: () async {
               final uid = FirebaseAuth.instance.currentUser?.uid;
               if (currentGroup == null || uid == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -187,15 +191,13 @@ class _ContactsState extends State<Contacts> {
                 return;
               }
               await showDialog(
-                  context: context,
-                  builder: (_) => BlocProvider.value(
-                      value: _contactBloc,
-                  child: ContactDialog(
-                      groupId: widget.groupId,
-                    ),
-                  ),
+                context: context,
+                builder: (_) => BlocProvider.value(
+                  value: _contactBloc,
+                  child: ContactDialog(groupId: widget.groupId),
+                ),
               );
-              if(!mounted) return;
+              if (!mounted) return;
               _contactBloc.loadContacts(groupId: widget.groupId);
             },
             backgroundColor: AppColors.primary,

@@ -16,8 +16,9 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBarStyles.auth(title: 'FAM-ILY'),
-        body: wholeBody(context));
+      appBar: AppBarStyles.auth(title: 'FAM-ILY'),
+      body: wholeBody(context),
+    );
   }
 
   Center wholeBody(BuildContext context) {
@@ -55,5 +56,4 @@ class _AuthPageState extends State<AuthPage> {
       ),
     );
   }
-
 }

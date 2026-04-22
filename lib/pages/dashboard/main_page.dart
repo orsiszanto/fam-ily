@@ -27,7 +27,6 @@ import 'package:familyapp/pages/auth/auth_page.dart';
 import 'package:familyapp/services/contact_service.dart';
 import 'package:familyapp/services/note_service.dart';
 
-
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
@@ -49,13 +48,15 @@ class _DashboardState extends State<Dashboard> {
         }
       },
       child: Scaffold(
-          appBar: AppBarStyles.dashboard(title: 'FAM-ILY',
+        appBar: AppBarStyles.dashboard(
+          title: 'FAM-ILY',
 
-            onProfile: () => Navigator.push(
+          onProfile: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const ProfilePage())),
+            MaterialPageRoute(builder: (_) => const ProfilePage()),
           ),
-          body: wholeBody(context)
+        ),
+        body: wholeBody(context),
       ),
     );
   }
@@ -81,14 +82,16 @@ class _DashboardState extends State<Dashboard> {
           case "ToDo List":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => BlocProvider(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
                   create: (_) => TodoBloc(TodoService()),
-              child:Todo(
-                groupId: currentGroup!,
-                createdBy: FirebaseAuth.instance.currentUser!.uid,
-                updatedBy: '',
-              )
-              )),
+                  child: Todo(
+                    groupId: currentGroup!,
+                    createdBy: FirebaseAuth.instance.currentUser!.uid,
+                    updatedBy: '',
+                  ),
+                ),
+              ),
             );
             break;
 
@@ -102,11 +105,12 @@ class _DashboardState extends State<Dashboard> {
           case "Notes":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => BlocProvider(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
                   create: (_) => NoteBloc(NoteService()),
-              child: Notes(
-                groupId : currentGroup!,
-                createdBy: FirebaseAuth.instance.currentUser!.uid,
+                  child: Notes(
+                    groupId: currentGroup!,
+                    createdBy: FirebaseAuth.instance.currentUser!.uid,
                   ),
                 ),
               ),
@@ -123,11 +127,10 @@ class _DashboardState extends State<Dashboard> {
           case "Contacts":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => BlocProvider(
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
                   create: (_) => ContactBloc(ContactService()),
-              child: Contacts(
-                  groupId: currentGroup!,
-                  ),
+                  child: Contacts(groupId: currentGroup!),
                 ),
               ),
             );

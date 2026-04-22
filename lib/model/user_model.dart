@@ -5,5 +5,5 @@ class User {
   bool isParent;
   String name;
 
-  User (this.email, this.groupCode, this.groupID, this.isParent, this.name);
+  User(this.email, this.groupCode, this.groupID, this.isParent, this.name);
 }

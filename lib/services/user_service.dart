@@ -295,9 +295,11 @@ class UserService {
     }
   }
 
-  static Future<void> _deleteTodoListWithItems(DocumentReference groupReference)async{
+  static Future<void> _deleteTodoListWithItems(
+    DocumentReference groupReference,
+  ) async {
     final todoListSnapshot = await groupReference.collection('todoLists').get();
-    for(var todoListDoc in todoListSnapshot.docs){
+    for (var todoListDoc in todoListSnapshot.docs) {
       await _deleteCollection(todoListDoc.reference.collection('todoItems'));
       await todoListDoc.reference.delete();
     }

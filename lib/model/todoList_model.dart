@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TodoList{
+class TodoList {
   final String id;
   final String title;
   final String createdBy;

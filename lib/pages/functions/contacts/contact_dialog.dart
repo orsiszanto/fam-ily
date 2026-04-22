@@ -15,11 +15,7 @@ class ContactDialog extends StatefulWidget {
   final String groupId;
   final Contact? contact;
 
-  const ContactDialog({
-    required this.groupId,
-    this.contact,
-    super.key,
-});
+  const ContactDialog({required this.groupId, this.contact, super.key});
 
   bool get isEdit => contact != null;
 
@@ -28,42 +24,41 @@ class ContactDialog extends StatefulWidget {
 }
 
 class _ContactDialogState extends State<ContactDialog> {
-
   late final TextEditingController nameController;
   late final TextEditingController phoneNumberController;
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(
-      text: widget.contact?.name ?? '');
+    nameController = TextEditingController(text: widget.contact?.name ?? '');
     phoneNumberController = TextEditingController(
-      text: widget.contact?.phoneNumber ?? '');
+      text: widget.contact?.phoneNumber ?? '',
+    );
   }
 
   @override
-  void dispose(){
+  void dispose() {
     nameController.dispose();
     phoneNumberController.dispose();
     super.dispose();
   }
 
-  void _saveContact(){
+  void _saveContact() {
     final name = nameController.text.trim();
     final phoneNumber = phoneNumberController.text.trim();
 
-    if(widget.isEdit){
+    if (widget.isEdit) {
       context.read<ContactBloc>().updateContact(
-          groupId: widget.groupId,
-          contactId: widget.contact!.id,
-          name: name,
-          phoneNumber: phoneNumber,
+        groupId: widget.groupId,
+        contactId: widget.contact!.id,
+        name: name,
+        phoneNumber: phoneNumber,
       );
-    }else{
+    } else {
       context.read<ContactBloc>().createContact(
-          groupId: widget.groupId,
-          name: name,
-          phoneNumber: phoneNumber,
+        groupId: widget.groupId,
+        name: name,
+        phoneNumber: phoneNumber,
       );
     }
   }
@@ -71,67 +66,65 @@ class _ContactDialogState extends State<ContactDialog> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ContactBloc, ContactState>(
-        listener: (context, state){
-          if(state is ContactCreated || state is ContactUpdated){
-            Navigator.pop(context);
-          }else if(state is ContactError){
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
-          }
-        },
+      listener: (context, state) {
+        if (state is ContactCreated || state is ContactUpdated) {
+          Navigator.pop(context);
+        } else if (state is ContactError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
       child: BlocBuilder<ContactBloc, ContactState>(
-          builder: (context, state){
-            final isLoading = state is ContactLoading;
+        builder: (context, state) {
+          final isLoading = state is ContactLoading;
 
-            return AlertDialog(
-              title: Text(widget.isEdit ? 'Edit Contact' : 'New Contact'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: nameController,
-                    enabled: !isLoading,
-                    decoration: const InputDecoration(
-                      hintText: 'Name'
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.m),
-                  TextField(
-                    controller: phoneNumberController,
-                    enabled: !isLoading,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      hintText: 'Phone number',
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m, vertical: AppSpacing.xs),
-                  child:
-                    Row(
-                      children: [
-                        AppButton(
-                          text: 'Cancel',
-                          onPressed: () => Navigator.pop(context),
-                          isLoading: isLoading,
-                          type: ButtonType.dialogCancel,
-                        ),
-                        const SizedBox(width: AppSpacing.xl,),
-                        AppButton(
-                          text: 'Save',
-                          onPressed: _saveContact,
-                          isLoading: isLoading,
-                          type: ButtonType.dialogSave,
-                        ),
-                      ],
-                    ),
+          return AlertDialog(
+            title: Text(widget.isEdit ? 'Edit Contact' : 'New Contact'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: nameController,
+                  enabled: !isLoading,
+                  decoration: const InputDecoration(hintText: 'Name'),
+                ),
+                const SizedBox(height: AppSpacing.m),
+                TextField(
+                  controller: phoneNumberController,
+                  enabled: !isLoading,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(hintText: 'Phone number'),
                 ),
               ],
-            );
-          },
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.m,
+                  vertical: AppSpacing.xs,
+                ),
+                child: Row(
+                  children: [
+                    AppButton(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.pop(context),
+                      isLoading: isLoading,
+                      type: ButtonType.dialogCancel,
+                    ),
+                    const SizedBox(width: AppSpacing.xl),
+                    AppButton(
+                      text: 'Save',
+                      onPressed: _saveContact,
+                      isLoading: isLoading,
+                      type: ButtonType.dialogSave,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

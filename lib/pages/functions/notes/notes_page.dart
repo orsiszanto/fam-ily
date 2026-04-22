@@ -24,11 +24,7 @@ class Notes extends StatefulWidget {
   final String createdBy;
   final String groupId;
 
-  const Notes({
-    required this.createdBy,
-    required this.groupId,
-    super.key,
-});
+  const Notes({required this.createdBy, required this.groupId, super.key});
 
   @override
   State<Notes> createState() => _NotesState();
@@ -59,35 +55,38 @@ class _NotesState extends State<Notes> {
     super.dispose();
   }
 
-  Future<bool> _confirmDelete(String noteTitle)async{
+  Future<bool> _confirmDelete(String noteTitle) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (dialogContext){
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Delete note'),
           content: Text('Are you sure you want to delete $noteTitle note?'),
           actions: [
             Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
-            child:
-              Row(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xs,
+                vertical: AppSpacing.xs,
+              ),
+              child: Row(
                 children: [
                   AppButton(
-                      text: 'Cancel',
-                      onPressed: () => Navigator.pop(dialogContext, false),
-                  type: ButtonType.dialogCancel,
+                    text: 'Cancel',
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                    type: ButtonType.dialogCancel,
                   ),
-                  SizedBox(width: AppSpacing.xl,),
+                  SizedBox(width: AppSpacing.xl),
                   AppButton(
-                      text: 'Delete',
-                      onPressed: () => Navigator.pop(dialogContext, true),
+                    text: 'Delete',
+                    onPressed: () => Navigator.pop(dialogContext, true),
                     type: ButtonType.dialogSave,
                   ),
                 ],
-              ))
+              ),
+            ),
           ],
         );
-      }
+      },
     );
     return result ?? false;
   }
@@ -120,9 +119,9 @@ class _NotesState extends State<Notes> {
 
                 if (filteredNotes.isEmpty) {
                   return Center(
-                      child: Text(
-                          searchQuery.isEmpty ? 'No notes' : 'No matching notes',
-                      )
+                    child: Text(
+                      searchQuery.isEmpty ? 'No notes' : 'No matching notes',
+                    ),
                   );
                 }
 
@@ -133,45 +132,46 @@ class _NotesState extends State<Notes> {
                     final note = filteredNotes[index];
 
                     return Dismissible(
-                        key: ValueKey(note.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(color: AppColors.alert),
-                        confirmDismiss: (_) async{
-                          return await _confirmDelete(note.title);
-                        },
-                      onDismissed: (_){
-                          _noteBloc.deleteNote(
-                              groupId: widget.groupId,
-                              noteId: note.id,
-                          );
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${note.title} note deleted!'),
-                            )
-                          );
+                      key: ValueKey(note.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(color: AppColors.alert),
+                      confirmDismiss: (_) async {
+                        return await _confirmDelete(note.title);
                       },
-                        child: AppCardStyles.noteList(
-                          title: note.title,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: _noteBloc,
-                                  child: NoteViewEdit(
-                                    note: note,
-                                    groupId: widget.groupId,
-                                    updatedBy: widget.createdBy,
-                                  ),
+                      onDismissed: (_) {
+                        _noteBloc.deleteNote(
+                          groupId: widget.groupId,
+                          noteId: note.id,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${note.title} note deleted!'),
+                          ),
+                        );
+                      },
+                      child: AppCardStyles.noteList(
+                        title: note.title,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: _noteBloc,
+                                child: NoteViewEdit(
+                                  note: note,
+                                  groupId: widget.groupId,
+                                  updatedBy: widget.createdBy,
                                 ),
                               ),
-                            ).then((_) {
-                              if (mounted) {
-                                _noteBloc.loadNotes(groupId: widget.groupId);
-                              }
-                            });
-                          },
-                        ),
+                            ),
+                          ).then((_) {
+                            if (mounted) {
+                              _noteBloc.loadNotes(groupId: widget.groupId);
+                            }
+                          });
+                        },
+                      ),
                     );
                   },
                 );

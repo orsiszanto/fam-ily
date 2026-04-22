@@ -20,7 +20,11 @@ class _DocumentsState extends State<Documents> {
         Expanded(child: Center(child: Text('Ide jönnek majd a dokumentumok'))),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: FloatingActionButton(onPressed: () {}, backgroundColor: Colors.lightGreen, child: const Icon(Icons.add)),
+          child: FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: Colors.lightGreen,
+            child: const Icon(Icons.add),
+          ),
         ),
       ],
     );

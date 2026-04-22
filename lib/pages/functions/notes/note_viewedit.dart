@@ -21,7 +21,7 @@ class NoteViewEdit extends StatefulWidget {
     super.key,
     required this.note,
     required this.groupId,
-    required this.updatedBy
+    required this.updatedBy,
   });
 
   @override
@@ -33,14 +33,14 @@ class _NoteViewEditState extends State<NoteViewEdit> {
   late final TextEditingController contentController;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     titleController = TextEditingController(text: widget.note.title);
-    contentController = TextEditingController(text:  widget.note.content);
+    contentController = TextEditingController(text: widget.note.content);
   }
 
   @override
-  void dispose(){
+  void dispose() {
     titleController.dispose();
     contentController.dispose();
     super.dispose();
@@ -51,11 +51,11 @@ class _NoteViewEditState extends State<NoteViewEdit> {
     final content = contentController.text.trim();
 
     context.read<NoteBloc>().updateNote(
-        groupId: widget.groupId,
-        noteId: widget.note.id,
-        title: title,
-        content: content,
-        updatedBy: widget.updatedBy,
+      groupId: widget.groupId,
+      noteId: widget.note.id,
+      title: title,
+      content: content,
+      updatedBy: widget.updatedBy,
     );
   }
 
@@ -64,14 +64,14 @@ class _NoteViewEditState extends State<NoteViewEdit> {
     return BlocListener<NoteBloc, NoteState>(
       listener: (context, state) {
         if (state is NoteUpdated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Note saved")),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Note saved")));
           Navigator.pop(context);
-        }else if (state is NoteError){
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+        } else if (state is NoteError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
@@ -80,16 +80,20 @@ class _NoteViewEditState extends State<NoteViewEdit> {
           onBack: () => Navigator.pop(context),
           actions: [
             IconButton(
-                onPressed: _saveNote,
-                icon: const Icon(Icons.save_as_outlined, color: AppColors.textPrimary,)
+              onPressed: _saveNote,
+              icon: const Icon(
+                Icons.save_as_outlined,
+                color: AppColors.textPrimary,
+              ),
             ),
           ],
         ),
-        body: wholeBody(context),),
+        body: wholeBody(context),
+      ),
     );
   }
 
-  Widget wholeBody (BuildContext context){
+  Widget wholeBody(BuildContext context) {
     final state = context.watch<NoteBloc>().state;
     final isLoading = state is NoteLoading;
 
@@ -101,10 +105,7 @@ class _NoteViewEditState extends State<NoteViewEdit> {
             hintText: "Title",
             border: InputBorder.none,
           ),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           enabled: !isLoading,
         ),
         Divider(),
@@ -123,7 +124,7 @@ class _NoteViewEditState extends State<NoteViewEdit> {
             enabled: !isLoading,
           ),
         ),
-        if(isLoading)
+        if (isLoading)
           const Padding(
             padding: EdgeInsets.only(top: AppSpacing.m),
             child: CircularProgressIndicator(),
@@ -131,7 +132,4 @@ class _NoteViewEditState extends State<NoteViewEdit> {
       ],
     );
   }
-
 }
-
-

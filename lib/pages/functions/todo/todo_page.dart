@@ -25,7 +25,12 @@ class Todo extends StatefulWidget {
   final String updatedBy;
   final String groupId;
 
-  const Todo({required this.createdBy, required this.updatedBy, required this.groupId, super.key});
+  const Todo({
+    required this.createdBy,
+    required this.updatedBy,
+    required this.groupId,
+    super.key,
+  });
 
   @override
   State<Todo> createState() => _TodoState();
@@ -151,7 +156,9 @@ class _TodoState extends State<Todo> {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('${todoList.title} todo list deleted!'),
+                            content: Text(
+                              '${todoList.title} todo list deleted!',
+                            ),
                           ),
                         );
                       },
@@ -164,10 +171,10 @@ class _TodoState extends State<Todo> {
                               builder: (_) => BlocProvider.value(
                                 value: _todoBloc,
                                 child: TodoViewEdit(
-                                    todoList: todoList,
-                                    groupId: widget.groupId,
-                                    updatedBy: widget.createdBy,
-                                )
+                                  todoList: todoList,
+                                  groupId: widget.groupId,
+                                  updatedBy: widget.createdBy,
+                                ),
                               ),
                             ),
                           ).then((_) {
@@ -202,8 +209,9 @@ class _TodoState extends State<Todo> {
                   builder: (_) => BlocProvider.value(
                     value: _todoBloc,
                     child: TodoCreate(
-                        groupId: widget.groupId,
-                        createdBy: widget.createdBy)
+                      groupId: widget.groupId,
+                      createdBy: widget.createdBy,
+                    ),
                   ),
                 ),
               ).then((_) {

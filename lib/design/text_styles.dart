@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:familyapp/design/colors.dart';
 
-class AppTextStyles{
+class AppTextStyles {
   static const TextStyle appBar = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.bold,
@@ -37,6 +37,4 @@ class AppTextStyles{
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
   );
-
-
 }

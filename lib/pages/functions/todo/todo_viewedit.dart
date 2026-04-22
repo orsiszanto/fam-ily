@@ -12,7 +12,6 @@ import 'package:familyapp/cubit/todo_cubit/todo_state.dart';
 //todos modell
 import 'package:familyapp/model/todoList_model.dart';
 
-
 class TodoViewEdit extends StatefulWidget {
   final TodoList todoList;
   final String groupId;
@@ -33,7 +32,7 @@ class _TodoViewEditState extends State<TodoViewEdit> {
   late final TextEditingController listTitleController;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     listTitleController = TextEditingController(text: widget.todoList.title);
 
@@ -47,7 +46,7 @@ class _TodoViewEditState extends State<TodoViewEdit> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     listTitleController.dispose();
     super.dispose();
   }
@@ -59,29 +58,28 @@ class _TodoViewEditState extends State<TodoViewEdit> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<TodoBloc, TodoState>(
-        listener: (context, state){
-          if (state is TodoSaved) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Todo list saved")),
+      listener: (context, state) {
+        if (state is TodoSaved) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Todo list saved")));
+          Navigator.pop(context);
+        } else if (state is TodoError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        } else if (state is TodoEditing) {
+          if (listTitleController.text != state.title) {
+            listTitleController.value = listTitleController.value.copyWith(
+              text: state.title,
+              selection: TextSelection.collapsed(offset: state.title.length),
             );
-            Navigator.pop(context);
-          } else if (state is TodoError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is TodoEditing) {
-            if (listTitleController.text != state.title) {
-              listTitleController.value = listTitleController.value.copyWith(
-                text: state.title,
-                selection: TextSelection.collapsed(offset: state.title.length),
-              );
-            }
           }
-        },
+        }
+      },
       child: Scaffold(
         appBar: AppBarStyles.functionsNewEdit(
           title: "EDIT TODO LIST",
@@ -98,40 +96,41 @@ class _TodoViewEditState extends State<TodoViewEdit> {
         ),
         body: BlocBuilder<TodoBloc, TodoState>(
           builder: (context, state) {
-            if( state is TodoLoading || state is TodoInitial){
+            if (state is TodoLoading || state is TodoInitial) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if(state is TodoError){
+            if (state is TodoError) {
               return Center(
                 child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.l),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Something went wrong",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    ),
-                    const SizedBox(height: AppSpacing.l),
-                    ElevatedButton(
-                        onPressed: (){
+                  padding: const EdgeInsets.all(AppSpacing.l),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Something went wrong",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.l),
+                      ElevatedButton(
+                        onPressed: () {
                           context.read<TodoBloc>().startEditDraft(
-                              groupId: widget.groupId,
-                              todoListId: widget.todoList.id,
+                            groupId: widget.groupId,
+                            todoListId: widget.todoList.id,
                           );
                         },
                         child: const Text("Retry"),
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
 
-            if(state is TodoEditing){
+            if (state is TodoEditing) {
               return wholeBody(context, state);
             }
             return const SizedBox.shrink();
@@ -141,8 +140,7 @@ class _TodoViewEditState extends State<TodoViewEdit> {
     );
   }
 
-  Widget wholeBody(BuildContext context, TodoEditing state){
-
+  Widget wholeBody(BuildContext context, TodoEditing state) {
     final isSaving = state.isSaving;
 
     return Column(
@@ -174,10 +172,10 @@ class _TodoViewEditState extends State<TodoViewEdit> {
                     onChanged: isSaving
                         ? null
                         : (_) {
-                      context.read<TodoBloc>().updateDraftItemStatus(
-                        i: i,
-                      );
-                    },
+                            context.read<TodoBloc>().updateDraftItemStatus(
+                              i: i,
+                            );
+                          },
                   ),
                   Expanded(
                     child: TextFormField(
@@ -200,8 +198,8 @@ class _TodoViewEditState extends State<TodoViewEdit> {
                     onPressed: isSaving
                         ? null
                         : () {
-                      context.read<TodoBloc>().deleteDraftItem(i: i);
-                    },
+                            context.read<TodoBloc>().deleteDraftItem(i: i);
+                          },
                     icon: const Icon(Icons.delete_outline),
                   ),
                 ],
@@ -217,8 +215,8 @@ class _TodoViewEditState extends State<TodoViewEdit> {
               onPressed: isSaving
                   ? null
                   : () {
-                context.read<TodoBloc>().addDraftItem();
-              },
+                      context.read<TodoBloc>().addDraftItem();
+                    },
               child: const Text("Add Item"),
             ),
           ),

@@ -165,8 +165,8 @@ class _TodoCreateState extends State<TodoCreate> {
               onPressed: isSaving
                   ? null
                   : () {
-                context.read<TodoBloc>().addDraftItem();
-              },
+                      context.read<TodoBloc>().addDraftItem();
+                    },
               child: const Text("Add Item"),
             ),
           ),

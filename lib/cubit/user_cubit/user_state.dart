@@ -36,7 +36,7 @@ class FailedAuth extends UserState {
   FailedAuth(this.errorMessage);
 }
 
-class UserError extends UserState{
+class UserError extends UserState {
   final String message;
   UserError(this.message);
 }

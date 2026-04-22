@@ -88,13 +88,13 @@ class UserBloc extends Cubit<UserState> {
     }
   }
 
-  void updateName(String newName)async{
+  void updateName(String newName) async {
     emit(UserInfoLoading());
-    try{
+    try {
       await UserService.updateName(newName);
       final userInfo = await UserService.loadUserInfo();
       emit(UserInfoUpdated(userInfo));
-    }catch(error){
+    } catch (error) {
       emit(UserError(error.toString()));
     }
   }

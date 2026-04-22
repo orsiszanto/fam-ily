@@ -15,18 +15,18 @@ class ContactService {
       throw Exception("You must fill both fields out!");
     }
 
-    final contactsDoc = _firestore.collection('group').doc(groupId).collection(
-        'contacts');
+    final contactsDoc = _firestore
+        .collection('group')
+        .doc(groupId)
+        .collection('contacts');
 
     await contactsDoc.add({
       'name': trimmedName,
-      'phoneNumber': trimmedPhoneNumber
+      'phoneNumber': trimmedPhoneNumber,
     });
   }
 
-  Future <List<Contact>> getContacts({
-    required String groupId,
-  }) async {
+  Future<List<Contact>> getContacts({required String groupId}) async {
     final snapshot = await _firestore
         .collection('group')
         .doc(groupId)
@@ -37,9 +37,9 @@ class ContactService {
       final data = doc.data();
 
       return Contact(
-          id: doc.id,
-          name: data['name'] ?? '',
-          phoneNumber: data['phoneNumber'] ?? ''
+        id: doc.id,
+        name: data['name'] ?? '',
+        phoneNumber: data['phoneNumber'] ?? '',
       );
     }).toList();
   }
@@ -49,26 +49,34 @@ class ContactService {
     required String contactId,
     required String name,
     required String phoneNumber,
-})async{
+  }) async {
     final trimmedName = name.trim();
     final trimmedPhoneNumber = phoneNumber.trim();
     if (trimmedPhoneNumber.isEmpty || trimmedName.isEmpty) {
       throw Exception("You must fill both fields out!");
     }
 
-    final contactDoc = _firestore.collection('group').doc(groupId).collection('contacts').doc(contactId);
+    final contactDoc = _firestore
+        .collection('group')
+        .doc(groupId)
+        .collection('contacts')
+        .doc(contactId);
 
     await contactDoc.update({
-      'name' : trimmedName,
-      'phoneNumber' : trimmedPhoneNumber,
+      'name': trimmedName,
+      'phoneNumber': trimmedPhoneNumber,
     });
   }
 
-  Future <void> deleteContact({
+  Future<void> deleteContact({
     required String groupId,
     required String contactId,
-})async{
-    final contactDoc = _firestore.collection('group').doc(groupId).collection('contacts').doc(contactId);
+  }) async {
+    final contactDoc = _firestore
+        .collection('group')
+        .doc(groupId)
+        .collection('contacts')
+        .doc(contactId);
     await contactDoc.delete();
   }
 }

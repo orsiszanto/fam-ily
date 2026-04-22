@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:familyapp/design/colors.dart';
 import 'package:familyapp/design/spacing.dart';
 import 'package:familyapp/design/text_styles.dart';
-enum ButtonType{
+
+enum ButtonType {
   primary,
   secondary,
   inverse,
@@ -23,7 +24,7 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     this.type = ButtonType.primary,
     this.isLoading = false,
-});
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class AppButton extends StatelessWidget {
     double height;
     TextStyle textStyle;
 
-    switch(type){
+    switch (type) {
       case ButtonType.inverse:
         backgroundColor = AppColors.bgLightGray;
         textColor = AppColors.primary;
@@ -81,29 +82,24 @@ class AppButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(
           vertical: AppSpacing.m,
-          horizontal: AppSpacing.s
+          horizontal: AppSpacing.s,
         ),
         minimumSize: Size(width, height),
       ),
-        onPressed: isLoading ? null : onPressed,
-        child: isLoading ?
-        SizedBox(
-          height: 18,
-          width: 18,
-          child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: textColor,
-        ),
-        )
-        : Text(
-            text,
-            style: textStyle.copyWith(color: textColor),
-        ),
+      onPressed: isLoading ? null : onPressed,
+      child: isLoading
+          ? SizedBox(
+              height: 18,
+              width: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: textColor,
+              ),
+            )
+          : Text(text, style: textStyle.copyWith(color: textColor)),
     );
   }
 }

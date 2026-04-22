@@ -50,7 +50,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,8 +60,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
       body: BlocConsumer<UserBloc, UserState>(
         listener: (context, state) {
           if (state is UserError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
 
           if (state is FailedAuth) {
@@ -71,12 +71,12 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
             ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
           }
 
-          if(state is UserInfoLoaded){
+          if (state is UserInfoLoaded) {
             _fillControllers(state);
           }
 
           if (state is UserInfoUpdated) {
-              _fillControllers(state);
+            _fillControllers(state);
             currentPasswordForEmailController.clear();
             newPasswordController.clear();
             currentPasswordForPasswordController.clear();
@@ -111,9 +111,13 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 const SizedBox(height: AppSpacing.s),
                 ElevatedButton(
                   onPressed: () {
-                    if(nameController.text.trim().isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You must fill out every field!")));
-                    }else{
+                    if (nameController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("You must fill out every field!"),
+                        ),
+                      );
+                    } else {
                       context.read<UserBloc>().updateName(nameController.text);
                     }
                   },
@@ -147,10 +151,21 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 const SizedBox(height: AppSpacing.s),
                 ElevatedButton(
                   onPressed: () {
-                    if(emailController.text.trim().isEmpty || currentPasswordForEmailController.text.isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You must fill out every field!")));
-                    }else{
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Confirmation email sent out, please check your new email's spam folder!")));
+                    if (emailController.text.trim().isEmpty ||
+                        currentPasswordForEmailController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("You must fill out every field!"),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Confirmation email sent out, please check your new email's spam folder!",
+                          ),
+                        ),
+                      );
                       context.read<UserBloc>().updateEmail(
                         emailController.text,
                         currentPasswordForEmailController.text,
@@ -187,9 +202,16 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                 const SizedBox(height: AppSpacing.s),
                 ElevatedButton(
                   onPressed: () {
-                    if(currentPasswordForPasswordController.text.trim().isEmpty || newPasswordController.text.isEmpty){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You must fill out every field!")));
-                    }else{
+                    if (currentPasswordForPasswordController.text
+                            .trim()
+                            .isEmpty ||
+                        newPasswordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("You must fill out every field!"),
+                        ),
+                      );
+                    } else {
                       context.read<UserBloc>().updatePassword(
                         newPasswordController.text,
                         currentPasswordForPasswordController.text,
@@ -235,5 +257,4 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         ? 'Please enter a vaild email address!'
         : null;
   }
-
 }
