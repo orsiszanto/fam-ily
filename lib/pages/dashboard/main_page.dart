@@ -1,4 +1,6 @@
+import 'package:familyapp/cubit/calendarEvent_cubit/calendarEvent_bloc.dart';
 import 'package:familyapp/cubit/todo_cubit/todo_bloc.dart';
+import 'package:familyapp/services/calendarEvent_service.dart';
 import 'package:familyapp/services/todo_service.dart';
 import 'package:flutter/material.dart';
 //design
@@ -98,7 +100,15 @@ class _DashboardState extends State<Dashboard> {
           case "Calendar":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Calendar()),
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (_) => CalendarBloc(CalendarService()),
+                  child: CalendarScreen(
+                    groupId: currentGroup!,
+                    createdBy: FirebaseAuth.instance.currentUser!.uid,
+                  ),
+                ),
+              ),
             );
             break;
 

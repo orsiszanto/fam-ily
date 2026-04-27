@@ -18,7 +18,7 @@ class CalendarError extends CalendarEventState {
 }
 
 class EventsLoaded extends CalendarEventState {
-  final Map <DateTime, List<CalendarEvent>> events;
+  final Map<DateTime, List<CalendarEvent>> events;
   final DateTime selectedDay;
   final List<CalendarEvent> selectedEvents;
 
@@ -26,5 +26,5 @@ class EventsLoaded extends CalendarEventState {
     required this.events,
     required this.selectedDay,
     required this.selectedEvents,
-});
+  });
 }
