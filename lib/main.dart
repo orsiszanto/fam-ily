@@ -9,12 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await FirebaseMessaging.instance.subscribeToTopic('newTodo');
-
-  final fcmToken = await FirebaseMessaging.instance.getToken();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
