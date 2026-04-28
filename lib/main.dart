@@ -1,5 +1,6 @@
 import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
+import 'package:familyapp/firebase_options.dart';
 import 'package:familyapp/pages/auth/auth_page.dart';
 import 'package:familyapp/pages/dashboard/main_page.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +9,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseMessaging.instance.subscribeToTopic('newTodo');
+
+  final fcmToken = await FirebaseMessaging.instance.getToken();
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
