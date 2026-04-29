@@ -46,6 +46,7 @@ class CalendarBloc extends Cubit<CalendarEventState> {
       await _calendarService.createEvent(
         groupId: groupId,
         title: title,
+        description: description,
         createdBy: createdBy,
         startDate: startDate,
         endDate: endDate,

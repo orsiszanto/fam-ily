@@ -11,7 +11,7 @@ class CalendarService {
     required DateTime startDate,
     required DateTime endDate,
     int? notifyBeforeMinutes,
-    String description = "",
+    required String description,
     String? recurrence,
   }) async {
     final trimmedTitle = title.trim();
