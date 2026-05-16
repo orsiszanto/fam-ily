@@ -1,7 +1,10 @@
 import 'package:familyapp/cubit/calendarEvent_cubit/calendarEvent_bloc.dart';
+import 'package:familyapp/cubit/document_cubit/document_bloc.dart';
 import 'package:familyapp/cubit/todo_cubit/todo_bloc.dart';
 import 'package:familyapp/services/calendarEvent_service.dart';
+import 'package:familyapp/services/document_service.dart';
 import 'package:familyapp/services/todo_service.dart';
+import 'package:familyapp/services/userSubscription_service.dart';
 import 'package:flutter/material.dart';
 //design
 import 'package:familyapp/design/app_bar.dart';
@@ -130,7 +133,12 @@ class _DashboardState extends State<Dashboard> {
           case "Documents":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const Documents()),
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (_) => DocumentBloc(DocumentService()),
+                  child: Documents(groupId: currentGroup!, fileName: ''),
+                ),
+              ),
             );
             break;
 

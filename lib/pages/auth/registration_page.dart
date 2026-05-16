@@ -15,6 +15,7 @@ class RegScreen extends StatefulWidget {
 }
 
 class _RegScreenState extends State<RegScreen> {
+  final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -70,6 +71,7 @@ class _RegScreenState extends State<RegScreen> {
               : Column(
                   children: [
                     Form(
+                      key: _formKey,
                       autovalidateMode: AutovalidateMode.always,
                       child: Column(
                         children: [
@@ -85,6 +87,7 @@ class _RegScreenState extends State<RegScreen> {
 
                           TextFormField(
                             controller: passwordController,
+                            validator: validatePassword,
                             decoration: InputDecoration(
                               labelText: "Password",
                               border: OutlineInputBorder(),
@@ -181,10 +184,32 @@ class _RegScreenState extends State<RegScreen> {
         : null;
   }
 
+  String? validatePassword(String? value) {
+    final password = value?.trim() ?? '';
+
+    if (password.isEmpty) {
+      return 'Please enter a password';
+    }
+
+    final hasMinimumLength = password.length >= 8;
+    final hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
+    final hasNumber = RegExp(r'\d').hasMatch(password);
+
+    if (!hasMinimumLength || !hasUppercase || !hasNumber) {
+      return 'Password must be at least 8 characters, include an uppercase letter and a number';
+    }
+
+    return null;
+  }
+
   Widget signupButton(BuildContext context) => AppButton(
     text: 'Sign up',
     type: ButtonType.inverse,
     onPressed: () {
+      if (!(_formKey.currentState?.validate() ?? false)) {
+        return;
+      }
+
       final email = emailController.text.trim();
       final password = passwordController.text.trim();
       final name = nameController.text.trim();

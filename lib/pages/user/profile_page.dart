@@ -3,7 +3,7 @@ import 'package:familyapp/cubit/user_cubit/user_state.dart';
 import 'package:familyapp/design/app_bar.dart';
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/spacing.dart';
-import 'package:familyapp/pages/auth/auth_page.dart';
+import 'package:familyapp/services/user_service.dart';
 import 'package:familyapp/pages/user/profile_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
-      listener: _listener,
+      listener: (BuildContext context, UserState state) {  },
       child: Scaffold(
         appBar: AppBarStyles.functions(
           title: 'SETTINGS',
@@ -37,22 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
         body: wholeBody(context),
       ),
     );
-  }
-
-  void _listener(BuildContext context, UserState state) {
-    if (state is NotAuthenticated) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const AuthPage()),
-        (route) => false,
-      );
-    }
-
-    if (state is FailedAuth) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
-    }
   }
 
   Widget wholeBody(BuildContext context) {
@@ -75,9 +59,86 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future<void> _showGroupCodeDialog(BuildContext context) async {
+    try {
+      final user = await UserService.loadUserInfo();
+      if (!context.mounted) return;
+
+      final groupCode = user.groupCode;
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Your family code"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SelectableText(
+                groupCode,
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: AppSpacing.m),
+              const Text(
+                "Share this code with your family members",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.m,
+                vertical: AppSpacing.xs,
+              ),
+              child: Row(
+                children: [
+                  AppButton(
+                    text: "Close",
+                    onPressed: () => Navigator.pop(context),
+                    type: ButtonType.dialogCancel,
+                  ),
+                  const SizedBox(width: AppSpacing.xl),
+                  AppButton(
+                    text: "Copy",
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: groupCode));
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Group code copied!"),
+                        ),
+                      );
+                    },
+                    type: ButtonType.dialogSave,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Your family code"),
+          content: const Text("Failed to load group code"),
+          actions: [
+            AppButton(
+              text: "Close",
+              onPressed: () => Navigator.pop(context),
+              type: ButtonType.dialogCancel,
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Widget _buildGridItem(BuildContext context, IconData icon, String label) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         switch (label) {
           case "Account":
             Navigator.push(
@@ -92,71 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
             break;
 
           case "Group code":
-            showDialog(
-              context: context,
-              builder: (_) => BlocBuilder<UserBloc, UserState>(
-                builder: (context, state) {
-                  String groupCode = "";
-
-                  if (state is UserInfoLoaded) {
-                    groupCode = state.user.groupCode;
-                  } else if (state is UserInfoUpdated) {
-                    groupCode = state.user.groupCode;
-                  }
-
-                  return AlertDialog(
-                    title: const Text("Your family code"),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SelectableText(
-                          groupCode.isEmpty ? "Loading..." : groupCode,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        const SizedBox(height: AppSpacing.m),
-                        const Text(
-                          "Share this code with your family members",
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.m,
-                          vertical: AppSpacing.xs,
-                        ),
-                        child: Row(
-                          children: [
-                            AppButton(
-                              text: "Close",
-                              onPressed: () => Navigator.pop(context),
-                              type: ButtonType.dialogCancel,
-                            ),
-                            const SizedBox(width: AppSpacing.xl),
-                            AppButton(
-                              text: "Copy",
-                              onPressed: () async {
-                                await Clipboard.setData(
-                                  ClipboardData(text: groupCode),
-                                );
-                                if (!context.mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Group code copied!"),
-                                  ),
-                                );
-                              },
-                              type: ButtonType.dialogSave,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            );
+            await _showGroupCodeDialog(context);
             break;
 
           case "Delete profile":

@@ -1,4 +1,5 @@
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
+import 'package:familyapp/services/userSubscription_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/services/user_service.dart';
@@ -13,9 +14,12 @@ class UserBloc extends Cubit<UserState> {
   void _init() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user == null) {
+        UserSubscriptionService.stopListening();
         currentGroup = null;
         emit(NotAuthenticated());
       } else {
+        await UserSubscriptionService.getInitialGroupId();
+        UserSubscriptionService.startListening();
         currentGroup = await UserService.getGroupIdByUserId(user.uid);
         emit(LoggedIn(user));
       }
@@ -114,6 +118,7 @@ class UserBloc extends Cubit<UserState> {
     emit(AuthInProgress());
     try {
       await UserService.deleteCurrentUser(currentPassword);
+      UserSubscriptionService.stopListening();
       currentGroup = null;
       emit(NotAuthenticated());
     } catch (error) {
@@ -122,6 +127,7 @@ class UserBloc extends Cubit<UserState> {
   }
 
   void signOut() {
+    UserSubscriptionService.stopListening();
     FirebaseAuth.instance.signOut();
     emit(NotAuthenticated());
   }

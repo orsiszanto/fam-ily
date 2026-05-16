@@ -1,3 +1,4 @@
+import 'package:familyapp/services/userSubscription_service.dart';
 import 'package:flutter/material.dart';
 //design
 import 'package:familyapp/design/app_searchBar.dart';
@@ -197,7 +198,8 @@ class _TodoState extends State<Todo> {
           child: FloatingActionButton(
             onPressed: () {
               final uid = FirebaseAuth.instance.currentUser?.uid;
-              if (currentGroup == null || uid == null) {
+              if (UserSubscriptionService.currentGroupId! == null ||
+                  uid == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('User or group not found')),
                 );

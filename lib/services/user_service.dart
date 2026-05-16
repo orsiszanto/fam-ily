@@ -2,8 +2,15 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familyapp/model/user_model.dart' as appUser;
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UserService {
+  static bool _isStrongPassword(String password) {
+    return password.length >= 8 &&
+        RegExp(r'[A-Z]').hasMatch(password) &&
+        RegExp(r'\d').hasMatch(password);
+  }
+
   static Future<User> signUpWithGroup(
     String email,
     String password,
@@ -12,6 +19,18 @@ class UserService {
     String? groupCode,
     bool isParent,
   ) async {
+    final trimmedPassword = password.trim();
+
+    if (trimmedPassword.isEmpty) {
+      throw Exception("Password cannot be empty");
+    }
+
+    if (!_isStrongPassword(trimmedPassword)) {
+      throw Exception(
+        "Password must be at least 8 characters, include an uppercase letter and a number",
+      );
+    }
+
     if (!createNewGroup) {
       final code = (groupCode ?? '').trim();
       if (code.isEmpty) {
@@ -22,7 +41,7 @@ class UserService {
 
     final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
-      password: password,
+      password: trimmedPassword,
     );
     final user = cred.user!;
 
@@ -74,6 +93,8 @@ class UserService {
           .collection('members')
           .doc(user.uid)
           .set({'userid': user.uid});
+
+      await FirebaseMessaging.instance.subscribeToTopic(groupId);
       return user;
     } catch (e) {
       try {
@@ -247,7 +268,6 @@ class UserService {
     }
 
     await reauthenticateUser(currentPassword);
-    await currentUser.delete();
 
     final batch = firestore.batch();
 
@@ -272,6 +292,8 @@ class UserService {
     if (members.docs.isEmpty) {
       await _deleteGroupCompletely(groupId);
     }
+
+    await currentUser.delete();
   }
 
   static Future<void> _deleteGroupCompletely(String groupId) async {

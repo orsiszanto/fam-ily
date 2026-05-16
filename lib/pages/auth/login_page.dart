@@ -2,7 +2,7 @@ import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
 import 'package:familyapp/cubit/user_cubit/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:familyapp/pages/auth/registration_page.dart';
-import 'package:familyapp/pages/dashboard/main_page.dart';
+import 'package:familyapp/pages/dashboard/dashboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/app_bar.dart';

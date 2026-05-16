@@ -4,9 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:familyapp/design/app_button.dart';
 import 'package:familyapp/design/spacing.dart';
 import 'package:familyapp/cubit/calendarEvent_cubit/calendarEvent_bloc.dart';
-import 'package:familyapp/design/app_bar.dart';
-import 'package:familyapp/design/app_button.dart';
-import 'package:familyapp/design/spacing.dart';
 
 class UpdateEventPage extends StatefulWidget {
   final String groupId;
