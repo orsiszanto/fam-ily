@@ -28,11 +28,11 @@ class NotificationService {
 
   static final AndroidNotificationChannel _androidChannel =
       AndroidNotificationChannel(
-    'high_importance_channel',
-    'High Importance Notifications',
-    description: 'Used to show notifications while the app is open.',
-    importance: Importance.high,
-  );
+        'high_importance_channel',
+        'High Importance Notifications',
+        description: 'Used to show notifications while the app is open.',
+        importance: Importance.high,
+      );
 
   Future<void> initFCM() async {
     if (_isInitialized) {
@@ -62,12 +62,14 @@ class NotificationService {
 
       await _localNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.createNotificationChannel(_androidChannel);
 
       await _localNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
 
       await _firebaseMessaging.setForegroundNotificationPresentationOptions(
@@ -162,10 +164,7 @@ class NotificationService {
       MaterialPageRoute(
         builder: (_) => BlocProvider(
           create: (_) => NoteBloc(NoteService()),
-          child: Notes(
-            groupId: groupId,
-            createdBy: currentUser.uid,
-          ),
+          child: Notes(groupId: groupId, createdBy: currentUser.uid),
         ),
       ),
     );

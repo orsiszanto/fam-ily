@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
-      listener: (BuildContext context, UserState state) {  },
+      listener: (BuildContext context, UserState state) {},
       child: Scaffold(
         appBar: AppBarStyles.functions(
           title: 'SETTINGS',
@@ -73,10 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SelectableText(
-                groupCode,
-                style: const TextStyle(fontSize: 18),
-              ),
+              SelectableText(groupCode, style: const TextStyle(fontSize: 18)),
               const SizedBox(height: AppSpacing.m),
               const Text(
                 "Share this code with your family members",
@@ -104,9 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       await Clipboard.setData(ClipboardData(text: groupCode));
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Group code copied!"),
-                        ),
+                        const SnackBar(content: Text("Group code copied!")),
                       );
                     },
                     type: ButtonType.dialogSave,

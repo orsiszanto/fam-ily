@@ -102,7 +102,6 @@ class MyApp extends StatelessWidget {
               }
 
               return const Dashboard();
-
             },
           ),
         ),

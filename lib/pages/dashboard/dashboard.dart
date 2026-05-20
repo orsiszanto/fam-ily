@@ -4,7 +4,7 @@ import 'package:familyapp/cubit/todo_cubit/todo_bloc.dart';
 import 'package:familyapp/services/calendarEvent_service.dart';
 import 'package:familyapp/services/document_service.dart';
 import 'package:familyapp/services/todo_service.dart';
-import 'package:familyapp/services/userSubscription_service.dart';
+
 import 'package:flutter/material.dart';
 //design
 import 'package:familyapp/design/app_bar.dart';
@@ -131,12 +131,17 @@ class _DashboardState extends State<Dashboard> {
             break;
 
           case "Documents":
+            final documentService = DocumentService();
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => BlocProvider(
-                  create: (_) => DocumentBloc(DocumentService()),
-                  child: Documents(groupId: currentGroup!, fileName: ''),
+                  create: (_) => DocumentBloc(documentService),
+                  child: Documents(
+                    groupId: currentGroup!,
+                    fileName: '',
+                    documentService: documentService,
+                  ),
                 ),
               ),
             );

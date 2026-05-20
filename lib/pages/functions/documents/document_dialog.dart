@@ -26,8 +26,17 @@ class _DocumentDialogState extends State<DocumentDialog> {
   File? file;
   late final TextEditingController fileNameController;
 
+  String get _documentButtonLabel {
+    if (file == null) {
+      return 'Select document';
+    }
+
+    final segments = file!.path.split(RegExp(r'[\\/]'));
+    return segments.isNotEmpty ? segments.last : 'Select document';
+  }
+
   @override
-  void initState(){
+  void initState() {
     fileNameController = TextEditingController();
     super.initState();
   }
@@ -76,17 +85,23 @@ class _DocumentDialogState extends State<DocumentDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ElevatedButton(
-                    onPressed: () async {
-                      var picked = await FilePicker.pickFiles();
+                  onPressed: () async {
+                    var picked = await FilePicker.pickFiles();
 
-                      if (picked != null && picked.files.first.path != null) {
-                        setState(() {
-                          file = File(picked.files.first.path!);
-                        });
-                        print(picked.files.first.name);
-                      }
-                    },
-                    child: Text('UPLOAD DOCUMENT'))
+                    if (picked != null && picked.files.first.path != null) {
+                      setState(() {
+                        file = File(picked.files.first.path!);
+                      });
+                      print(picked.files.first.name);
+                    }
+                  },
+                  child: Text(
+                    _documentButtonLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ],
             ),
             actions: [

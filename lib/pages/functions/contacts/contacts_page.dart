@@ -13,7 +13,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 //cubit
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:familyapp/cubit/user_cubit/user_bloc.dart';
 import 'package:familyapp/cubit/contact_cubit/contact_bloc.dart';
 import 'package:familyapp/cubit/contact_cubit/contact_state.dart';
 

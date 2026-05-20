@@ -16,7 +16,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class Documents extends StatefulWidget {
   final String groupId;
   final String fileName;
-  const Documents({required this.groupId, required this.fileName, super.key});
+  final DocumentService documentService;
+  const Documents({
+    required this.groupId,
+    required this.fileName,
+    required this.documentService,
+    super.key,
+  });
 
   @override
   State<Documents> createState() => _DocumentsState();
@@ -26,6 +32,32 @@ class _DocumentsState extends State<Documents> {
   String searchQuery = "";
   final fileNameController = TextEditingController();
   late DocumentBloc _documentBloc;
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) {
+      return '$bytes B';
+    }
+
+    const suffixes = ['KB', 'MB', 'GB', 'TB'];
+    double size = bytes.toDouble();
+    int suffixIndex = -1;
+
+    do {
+      size /= 1024;
+      suffixIndex++;
+    } while (size >= 1024 && suffixIndex < suffixes.length - 1);
+
+    return '${size.toStringAsFixed(size >= 10 ? 0 : 1)} ${suffixes[suffixIndex]}';
+  }
+
+  String _formatFileType(String fileType) {
+    final normalized = fileType.trim();
+    if (normalized.isEmpty) {
+      return 'Unknown type';
+    }
+
+    return normalized.toUpperCase();
+  }
 
   @override
   void didChangeDependencies() {
@@ -149,31 +181,82 @@ class _DocumentsState extends State<Documents> {
                       },
                       child: AppCardStyles.documentList(
                         title: document.fileName,
+                        subtitle: Text(
+                          '${_formatFileSize(document.fileSize)} • ${_formatFileType(document.fileType)}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                        ),
                         onTap: () async {
-                          final shouldDownload = await showDialog<bool>
-                            (context: context,
-                              builder: (dialogContext){
+                          final shouldDownload = await showDialog<bool>(
+                            context: context,
+                            builder: (dialogContext) {
                               return AlertDialog(
                                 title: const Text('Download document'),
-                                content: Text('Do you want to download ${document.fileName} on your device?'),
+                                content: Text(
+                                  'Do you want to download ${document.fileName} on your device?',
+                                ),
                                 actions: [
-                                  TextButton(onPressed: () => Navigator.pop(dialogContext, false),
-                                      child: const Text('Cancel'),
-                                  ),
-                                  TextButton(onPressed: () => Navigator.pop(dialogContext, true),
-                                      child: const Text('Download'),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.m,
+                                      vertical: AppSpacing.xs,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        AppButton(
+                                          text: 'Cancel',
+                                          onPressed: () => Navigator.pop(
+                                            dialogContext,
+                                            false,
+                                          ),
+                                          type: ButtonType.dialogCancel,
+                                        ),
+                                        const SizedBox(width: AppSpacing.xl),
+                                        AppButton(
+                                          text: 'Download',
+                                          onPressed: () => Navigator.pop(
+                                            dialogContext,
+                                            true,
+                                          ),
+                                          type: ButtonType.dialogSave,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               );
-                              },
+                            },
                           );
 
-                          if(shouldDownload != true)return;
+                          if (shouldDownload != true) return;
 
-                          await context.read<DocumentService>().downloadDocument(
-                            groupId: widget.groupId,
-                            fileName: document.fileName,
-                          );
+                          try {
+                            final downloadPath = await widget.documentService
+                                .downloadDocument(
+                                  groupId: widget.groupId,
+                                  fileName: document.fileName,
+                                );
+
+                            if (!mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('File saved to: $downloadPath'),
+                              ),
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Download failed: $e'),
+                                backgroundColor: AppColors.alert,
+                              ),
+                            );
+                          }
 
                           if (!mounted) return;
                           _documentBloc.loadDocuments(groupId: widget.groupId);

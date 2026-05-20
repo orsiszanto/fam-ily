@@ -19,15 +19,19 @@ class _RegScreenState extends State<RegScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final groupCodeController = TextEditingController();
   bool isParent = false;
   bool createNewGroup = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     groupCodeController.dispose();
 
     super.dispose();
@@ -37,7 +41,7 @@ class _RegScreenState extends State<RegScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarStyles.subpage(
-        title: 'SIGN IN',
+        title: 'SIGN UP',
         onBack: () => Navigator.pop(context),
       ),
       body: wholeBody(context),
@@ -66,100 +70,144 @@ class _RegScreenState extends State<RegScreen> {
               ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
             }
           },
-          builder: (context, state) => state is AuthInProgress
-              ? CircularProgressIndicator()
-              : Column(
-                  children: [
-                    Form(
-                      key: _formKey,
-                      autovalidateMode: AutovalidateMode.always,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: emailController,
-                            validator: validateEmail,
-                            decoration: InputDecoration(
-                              labelText: "Email",
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.l),
+          builder: (context, state) {
+            if (state is AuthInProgress) {
+              return const CircularProgressIndicator();
+            }
 
-                          TextFormField(
-                            controller: passwordController,
-                            validator: validatePassword,
-                            decoration: InputDecoration(
-                              labelText: "Password",
-                              border: OutlineInputBorder(),
-                            ),
-                            obscureText: true,
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: emailController,
+                          validator: validateEmail,
+                          decoration: InputDecoration(
+                            labelText: "Email",
+                            border: OutlineInputBorder(),
                           ),
-                          SizedBox(height: AppSpacing.l),
+                        ),
+                        SizedBox(height: AppSpacing.l),
 
-                          TextFormField(
-                            controller: nameController,
-                            decoration: InputDecoration(
-                              labelText: "Name",
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.l),
-
-                          CheckboxListTile(
-                            value: isParent,
-                            onChanged: (value) {
-                              setState(() {
-                                isParent = value ?? false;
-                              });
-                            },
-                            title: const Text("Sign up as a Parent"),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          SizedBox(height: AppSpacing.l),
-
-                          CheckboxListTile(
-                            value: createNewGroup,
-                            onChanged: (value) {
-                              setState(() {
-                                createNewGroup = value ?? false;
-                              });
-                            },
-                            title: const Text("Make a new family group"),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-
-                          if (!createNewGroup) ...[
-                            SizedBox(height: AppSpacing.l),
-                            TextFormField(
-                              controller: groupCodeController,
-                              decoration: InputDecoration(
-                                labelText: "Existing family group code",
-                                border: OutlineInputBorder(),
+                        TextFormField(
+                          controller: passwordController,
+                          validator: validatePassword,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            border: OutlineInputBorder(),
+                            errorMaxLines: 4,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
                             ),
-                          ],
+                          ),
+                          obscureText: _obscurePassword,
+                        ),
+                        SizedBox(height: AppSpacing.l),
 
+                        TextFormField(
+                          controller: confirmPasswordController,
+                          validator: validateConfirmPassword,
+                          decoration: InputDecoration(
+                            labelText: "Confirm password",
+                            border: OutlineInputBorder(),
+                            errorMaxLines: 3,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureConfirmPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscureConfirmPassword =
+                                      !_obscureConfirmPassword;
+                                });
+                              },
+                            ),
+                          ),
+                          obscureText: _obscureConfirmPassword,
+                        ),
+                        SizedBox(height: AppSpacing.l),
+
+                        TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: "Name",
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        SizedBox(height: AppSpacing.l),
+
+                        CheckboxListTile(
+                          value: isParent,
+                          onChanged: (value) {
+                            setState(() {
+                              isParent = value ?? false;
+                            });
+                          },
+                          title: const Text("Sign up as a Parent"),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        SizedBox(height: AppSpacing.l),
+
+                        CheckboxListTile(
+                          value: createNewGroup,
+                          onChanged: (value) {
+                            setState(() {
+                              createNewGroup = value ?? false;
+                            });
+                          },
+                          title: const Text("Make a new family group"),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+
+                        if (!createNewGroup) ...[
                           SizedBox(height: AppSpacing.l),
-                          signupButton(context),
+                          TextFormField(
+                            controller: groupCodeController,
+                            decoration: InputDecoration(
+                              labelText: "Existing family group code",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
                         ],
-                      ),
+
+                        SizedBox(height: AppSpacing.l),
+                        signupButton(context),
+                      ],
                     ),
-                    SizedBox(height: AppSpacing.l),
-                    Text('If you already have an account, please log in'),
-                    AppButton(
-                      text: 'Log in',
-                      type: ButtonType.inverse,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => LoginScreen()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: AppSpacing.l),
+                  Text('If you already have an account, please log in'),
+                  AppButton(
+                    text: 'Log in',
+                    type: ButtonType.inverse,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => LoginScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -196,7 +244,24 @@ class _RegScreenState extends State<RegScreen> {
     final hasNumber = RegExp(r'\d').hasMatch(password);
 
     if (!hasMinimumLength || !hasUppercase || !hasNumber) {
-      return 'Password must be at least 8 characters, include an uppercase letter and a number';
+      return '''Password must:
+• be at least 8 characters long
+• include an uppercase letter
+• include a number''';
+    }
+
+    return null;
+  }
+
+  String? validateConfirmPassword(String? value) {
+    final confirmPassword = value?.trim() ?? '';
+
+    if (confirmPassword.isEmpty) {
+      return 'Please confirm your password';
+    }
+
+    if (confirmPassword != passwordController.text.trim()) {
+      return 'Passwords do not match';
     }
 
     return null;
@@ -212,10 +277,14 @@ class _RegScreenState extends State<RegScreen> {
 
       final email = emailController.text.trim();
       final password = passwordController.text.trim();
+      final confirmPassword = confirmPasswordController.text.trim();
       final name = nameController.text.trim();
       final groupCode = groupCodeController.text.trim();
 
-      if (email.isEmpty || password.isEmpty || name.isEmpty) {
+      if (email.isEmpty ||
+          password.isEmpty ||
+          confirmPassword.isEmpty ||
+          name.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("You must fill out every field")),
         );

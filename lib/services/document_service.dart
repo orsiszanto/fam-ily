@@ -1,11 +1,16 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familyapp/model/document_model.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DocumentService {
+  static const MethodChannel _downloadsChannel = MethodChannel(
+    'familyapp/downloads',
+  );
+
   Future<void> uploadDocument({
     required File file,
     required String groupId,
@@ -75,10 +80,33 @@ class DocumentService {
     required String groupId,
     required String fileName,
   }) async {
+    try {
+      final Directory tempDir = await getTemporaryDirectory();
+      final File tempFile = File('${tempDir.path}/$fileName');
+
       final storageRef = FirebaseStorage.instance.ref().child(
         'group/$groupId/documents/$fileName',
       );
-      return await storageRef.getDownloadURL();
+
+      await storageRef.writeToFile(tempFile);
+
+      final String savedPath =
+          await _downloadsChannel.invokeMethod<String>('saveToDownloads', {
+            'sourcePath': tempFile.path,
+            'fileName': fileName,
+          }) ??
+          tempFile.path;
+
+      try {
+        if (await tempFile.exists()) {
+          await tempFile.delete();
+        }
+      } catch (_) {}
+
+      return savedPath;
+    } catch (e) {
+      throw Exception('Failed to download document: $e');
+    }
   }
 
   Future<void> deleteDocument({

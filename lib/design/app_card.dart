@@ -66,7 +66,12 @@ class AppCardStyles {
       ),
     );
   }
-  static Card documentList({required String title, required VoidCallback onTap}) {
+
+  static Card documentList({
+    required String title,
+    required VoidCallback onTap,
+    Widget? subtitle,
+  }) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(top: AppSpacing.m),
@@ -79,6 +84,7 @@ class AppCardStyles {
             fontWeight: FontWeight.w500,
           ),
         ),
+        subtitle: subtitle,
         trailing: const Icon(
           Icons.chevron_right,
           color: AppColors.textSecondary,
