@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: () => Navigator.pop(context),
                       type: ButtonType.dialogCancel,
                     ),
-                    const SizedBox(width: AppSpacing.xl),
+                    const SizedBox(width: AppSpacing.l),
                     AppButton(
                       text: "Copy",
                       onPressed: () async {
@@ -194,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () => Navigator.pop(dialogContext),
                             type: ButtonType.dialogCancel,
                           ),
-                          const SizedBox(width: AppSpacing.xl),
+                          const SizedBox(width: AppSpacing.l),
                           AppButton(
                             text: "Delete",
                             onPressed: () {

@@ -114,7 +114,7 @@ class _ContactDialogState extends State<ContactDialog> {
                         isLoading: isLoading,
                         type: ButtonType.dialogCancel,
                       ),
-                      const SizedBox(width: AppSpacing.xl),
+                      const SizedBox(width: AppSpacing.l),
                       AppButton(
                         text: 'Save',
                         onPressed: _saveContact,

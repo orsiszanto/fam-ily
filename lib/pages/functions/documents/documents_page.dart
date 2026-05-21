@@ -101,7 +101,7 @@ class _DocumentsState extends State<Documents> {
                       onPressed: () => Navigator.pop(dialogContext, false),
                       type: ButtonType.dialogCancel,
                     ),
-                    const SizedBox(width: AppSpacing.xl),
+                    const SizedBox(width: AppSpacing.l),
                     AppButton(
                       text: 'Delete',
                       onPressed: () => Navigator.pop(dialogContext, true),
@@ -219,7 +219,7 @@ class _DocumentsState extends State<Documents> {
                                             ),
                                             type: ButtonType.dialogCancel,
                                           ),
-                                          const SizedBox(width: AppSpacing.xl),
+                                          const SizedBox(width: AppSpacing.l),
                                           AppButton(
                                             text: 'Download',
                                             onPressed: () => Navigator.pop(

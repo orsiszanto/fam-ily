@@ -117,7 +117,7 @@ class _DocumentDialogState extends State<DocumentDialog> {
                         isLoading: isLoading,
                         type: ButtonType.dialogCancel,
                       ),
-                      const SizedBox(width: AppSpacing.xl),
+                      const SizedBox(width: AppSpacing.l),
                       AppButton(
                         text: 'Save',
                         onPressed: _uploadDocument,

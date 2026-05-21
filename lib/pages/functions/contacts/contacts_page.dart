@@ -78,7 +78,7 @@ class _ContactsState extends State<Contacts> {
                       onPressed: () => Navigator.pop(dialogContext, false),
                       type: ButtonType.dialogCancel,
                     ),
-                    const SizedBox(width: AppSpacing.xl),
+                    const SizedBox(width: AppSpacing.l),
                     AppButton(
                       text: 'Delete',
                       onPressed: () => Navigator.pop(dialogContext, true),

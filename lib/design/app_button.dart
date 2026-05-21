@@ -52,30 +52,30 @@ class AppButton extends StatelessWidget {
       case ButtonType.dialogSave:
         backgroundColor = AppColors.primary;
         textColor = Colors.white;
-        width = 100;
+        width = 90;
         height = 60;
-        textStyle = AppTextStyles.headline2;
+        textStyle = AppTextStyles.headline3;
         break;
       case ButtonType.dialogCancel:
         backgroundColor = Colors.white;
         textColor = AppColors.textPrimary;
-        width = 100;
+        width = 90;
         height = 60;
-        textStyle = AppTextStyles.headline2;
+        textStyle = AppTextStyles.headline3;
         break;
       case ButtonType.dialogDelete:
         backgroundColor = AppColors.alert;
         textColor = AppColors.textPrimary;
-        width = 100;
+        width = 90;
         height = 60;
-        textStyle = AppTextStyles.headline2;
+        textStyle = AppTextStyles.headline3;
         break;
       default:
         backgroundColor = AppColors.primary;
         textColor = Colors.white;
         width = 350;
         height = 60;
-        textStyle = AppTextStyles.headline2;
+        textStyle = AppTextStyles.headline3;
         break;
     }
 
