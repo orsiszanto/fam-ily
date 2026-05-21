@@ -34,7 +34,7 @@ class _NoteCreateState extends State<NoteCreate> {
     final title = titleController.text.trim();
     final content = contentController.text.trim();
 
-    context.read<NoteBloc>().createNote(
+    BlocProvider.of<NoteBloc>(context).createNote(
       groupId: widget.groupId,
       title: title,
       createdBy: widget.createdBy,

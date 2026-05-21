@@ -48,14 +48,14 @@ class _ContactDialogState extends State<ContactDialog> {
     final phoneNumber = phoneNumberController.text.trim();
 
     if (widget.isEdit) {
-      context.read<ContactBloc>().updateContact(
+      BlocProvider.of<ContactBloc>(context).updateContact(
         groupId: widget.groupId,
         contactId: widget.contact!.id,
         name: name,
         phoneNumber: phoneNumber,
       );
     } else {
-      context.read<ContactBloc>().createContact(
+      BlocProvider.of<ContactBloc>(context).createContact(
         groupId: widget.groupId,
         name: name,
         phoneNumber: phoneNumber,

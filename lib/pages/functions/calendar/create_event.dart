@@ -80,7 +80,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }
 
   Future<void> _save() async {
-    await context.read<CalendarBloc>().createEvent(
+    await BlocProvider.of<CalendarBloc>(context).createEvent(
       groupId: widget.groupId,
       title: titleController.text,
       createdBy: widget.createdBy,

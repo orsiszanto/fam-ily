@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 //design
 import 'package:familyapp/design/app_searchBar.dart';
 import 'package:familyapp/design/app_bar.dart';
@@ -38,19 +39,17 @@ class Todo extends StatefulWidget {
 class _TodoState extends State<Todo> {
   final titleController = TextEditingController();
   String searchQuery = "";
-  late TodoBloc _todoBloc;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _todoBloc = context.read<TodoBloc>();
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _todoBloc.loadTodoLists(groupId: widget.groupId);
+      BlocProvider.of<TodoBloc>(context).loadTodoLists(groupId: widget.groupId);
     });
   }
 
@@ -65,7 +64,7 @@ class _TodoState extends State<Todo> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete note'),
+          title: const Text('Delete Todo list'),
           content: Text(
             'Are you sure you want to delete $todoListTitle todo list?',
           ),
@@ -113,120 +112,133 @@ class _TodoState extends State<Todo> {
   }
 
   Widget wholeBody(BuildContext context) {
-    return Column(
-      children: [
-        searchBar(),
-        Expanded(
-          child: BlocBuilder<TodoBloc, TodoState>(
-            builder: (context, state) {
-              if (state is TodoLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is TodoListsLoaded) {
-                final filteredTodos = state.todos.where((todo) {
-                  return todo.title.toLowerCase().contains(searchQuery);
-                }).toList();
-
-                if (filteredTodos.isEmpty) {
-                  return Center(
-                    child: Text(
-                      searchQuery.isEmpty
-                          ? 'No todo lists'
-                          : 'No matching todo lists',
-                    ),
-                  );
+    return BlocListener<TodoBloc, TodoState>(
+      listener: (context, state) async {
+        if (state is TodoDeleted) {
+          BlocProvider.of<TodoBloc>(
+            context,
+          ).loadTodoLists(groupId: widget.groupId);
+        } else if (state is TodoError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Column(
+        children: [
+          searchBar(),
+          Expanded(
+            child: BlocBuilder<TodoBloc, TodoState>(
+              builder: (context, state) {
+                if (state is TodoLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
+                if (state is TodoListsLoaded) {
+                  final filteredTodos = state.todos.where((todo) {
+                    return todo.title.toLowerCase().contains(searchQuery);
+                  }).toList();
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
-                  itemCount: filteredTodos.length,
-                  itemBuilder: (context, index) {
-                    final todoList = filteredTodos[index];
+                  if (filteredTodos.isEmpty) {
+                    return Center(
+                      child: Text(
+                        searchQuery.isEmpty
+                            ? 'No todo lists'
+                            : 'No matching todo lists',
+                      ),
+                    );
+                  }
 
-                    return Dismissible(
-                      key: ValueKey(todoList.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(color: AppColors.alert),
-                      confirmDismiss: (_) async {
-                        return await _confirmDelete(todoList.title);
-                      },
-                      onDismissed: (_) {
-                        _todoBloc.deleteTodoList(
-                          groupId: widget.groupId,
-                          todoListId: todoList.id,
-                        );
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.m,
+                    ),
+                    itemCount: filteredTodos.length,
+                    itemBuilder: (context, index) {
+                      final todoList = filteredTodos[index];
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${todoList.title} todo list deleted!',
+                      return Dismissible(
+                        key: ValueKey(todoList.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(color: AppColors.alert),
+                        confirmDismiss: (_) async {
+                          return await _confirmDelete(todoList.title);
+                        },
+                        onDismissed: (_) {
+                          BlocProvider.of<TodoBloc>(context).deleteTodoList(
+                            groupId: widget.groupId,
+                            todoListId: todoList.id,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${todoList.title} todo list deleted!',
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      child: AppCardStyles.todoList(
-                        title: todoList.title,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: _todoBloc,
-                                child: TodoViewEdit(
+                          );
+                        },
+                        child: AppCardStyles.todoList(
+                          title: todoList.title,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => TodoViewEdit(
                                   todoList: todoList,
                                   groupId: widget.groupId,
                                   updatedBy: widget.createdBy,
                                 ),
                               ),
-                            ),
-                          ).then((_) {
-                            if (mounted) {
-                              _todoBloc.loadTodoLists(groupId: widget.groupId);
-                            }
-                          });
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
+                            ).then((_) {
+                              if (mounted) {
+                                BlocProvider.of<TodoBloc>(
+                                  context,
+                                ).loadTodoLists(groupId: widget.groupId);
+                              }
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: FloatingActionButton(
-            onPressed: () {
-              final uid = FirebaseAuth.instance.currentUser?.uid;
-              if (uid == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('User or group not found')),
-                );
-                return;
-              }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                    value: _todoBloc,
-                    child: TodoCreate(
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: FloatingActionButton(
+              onPressed: () {
+                final uid = FirebaseAuth.instance.currentUser?.uid;
+                if (uid == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User or group not found')),
+                  );
+                  return;
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TodoCreate(
                       groupId: widget.groupId,
                       createdBy: widget.createdBy,
                     ),
                   ),
-                ),
-              ).then((_) {
-                if (mounted) {
-                  _todoBloc.loadTodoLists(groupId: widget.groupId);
-                }
-              });
-            },
-            backgroundColor: AppColors.primary,
-            child: const Icon(Icons.add),
+                ).then((_) {
+                  if (mounted) {
+                    BlocProvider.of<TodoBloc>(
+                      context,
+                    ).loadTodoLists(groupId: widget.groupId);
+                  }
+                });
+              },
+              backgroundColor: AppColors.primary,
+              child: const Icon(Icons.add),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

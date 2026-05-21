@@ -24,7 +24,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<UserBloc>().loadUserInfo();
+    BlocProvider.of<UserBloc>(context).loadUserInfo();
   }
 
   @override
@@ -41,7 +41,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
     if (!_didFillInitialValues) {
       if (state is UserInfoLoaded || state is UserInfoUpdated) {
         final user = (state is UserInfoLoaded)
-            ? (state as UserInfoLoaded).user
+            ? (state).user
             : (state as UserInfoUpdated).user;
         nameController.text = user.name;
         emailController.text = user.email;
@@ -118,7 +118,9 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                         ),
                       );
                     } else {
-                      context.read<UserBloc>().updateName(nameController.text);
+                      BlocProvider.of<UserBloc>(
+                        context,
+                      ).updateName(nameController.text);
                     }
                   },
                   child: const Text("Save name"),
@@ -166,7 +168,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                           ),
                         ),
                       );
-                      context.read<UserBloc>().updateEmail(
+                      BlocProvider.of<UserBloc>(context).updateEmail(
                         emailController.text,
                         currentPasswordForEmailController.text,
                       );
@@ -212,7 +214,7 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                         ),
                       );
                     } else {
-                      context.read<UserBloc>().updatePassword(
+                      BlocProvider.of<UserBloc>(context).updatePassword(
                         newPasswordController.text,
                         currentPasswordForPasswordController.text,
                       );

@@ -3,11 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:familyapp/cubit/note_cubit/note_bloc.dart';
-import 'package:familyapp/pages/functions/notes/notes_page.dart';
-import 'package:familyapp/services/note_service.dart';
 
 class NotificationService {
   NotificationService._internal();
@@ -17,8 +12,6 @@ class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  static Map<String, dynamic>? _pendingNotificationTap;
-  static bool _pendingNotificationRetryScheduled = false;
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
@@ -79,17 +72,7 @@ class NotificationService {
       );
     }
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _handleNotificationTap(message.data);
-    });
-
-    final initialMessage = await _firebaseMessaging.getInitialMessage();
-    if (initialMessage != null) {
-      _handleNotificationTap(initialMessage.data);
-    }
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-
       final notification = message.notification;
       final android = notification?.android;
 
@@ -123,65 +106,9 @@ class NotificationService {
 
     try {
       final decoded = jsonDecode(payload);
-      if (decoded is Map<String, dynamic>) {
-        _handleNotificationTap(decoded);
-      }
+      if (decoded is Map<String, dynamic>) {}
     } catch (_) {
       // Ignore malformed payloads.
     }
-  }
-
-  void _handleNotificationTap(Map<String, dynamic> data) {
-    final target = data['target']?.toString();
-    if (target != 'notes') {
-      return;
-    }
-
-    final groupId = data['groupId']?.toString();
-    if (groupId == null || groupId.isEmpty) {
-      return;
-    }
-
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      return;
-    }
-
-    final navigator = navigatorKey.currentState;
-    if (navigator == null) {
-      _pendingNotificationTap = data;
-      _schedulePendingNotificationRetry();
-      return;
-    }
-
-    _pendingNotificationTap = null;
-
-    navigator.push(
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => NoteBloc(NoteService()),
-          child: Notes(groupId: groupId, createdBy: currentUser.uid),
-        ),
-      ),
-    );
-  }
-
-  void _schedulePendingNotificationRetry() {
-    if (_pendingNotificationRetryScheduled) {
-      return;
-    }
-
-    _pendingNotificationRetryScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _pendingNotificationRetryScheduled = false;
-
-      final pendingTap = _pendingNotificationTap;
-      if (pendingTap == null) {
-        return;
-      }
-
-      _pendingNotificationTap = null;
-      _handleNotificationTap(pendingTap);
-    });
   }
 }

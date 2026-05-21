@@ -17,12 +17,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late UserBloc _userBloc;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _userBloc = context.read<UserBloc>();
   }
 
   @override
@@ -141,12 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
           case "Account":
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider.value(
-                  value: _userBloc,
-                  child: const ProfileSettingsPage(),
-                ),
-              ),
+              MaterialPageRoute(builder: (_) => ProfileSettingsPage()),
             );
             break;
 
@@ -200,7 +192,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () {
                               final password = passwordController.text.trim();
                               Navigator.pop(dialogContext);
-                              _userBloc.deleteProfile(password);
+                              BlocProvider.of<UserBloc>(
+                                context,
+                              ).deleteProfile(password);
                             },
                             type: ButtonType.dialogDelete,
                           ),

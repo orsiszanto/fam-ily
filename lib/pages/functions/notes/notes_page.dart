@@ -21,9 +21,15 @@ import 'package:familyapp/pages/functions/notes/note_create.dart';
 
 class Notes extends StatefulWidget {
   final String createdBy;
+  final String updatedBy;
   final String groupId;
 
-  const Notes({required this.createdBy, required this.groupId, super.key});
+  const Notes({
+    required this.createdBy,
+    required this.updatedBy,
+    required this.groupId,
+    super.key,
+  });
 
   @override
   State<Notes> createState() => _NotesState();
@@ -32,19 +38,17 @@ class Notes extends StatefulWidget {
 class _NotesState extends State<Notes> {
   final titleController = TextEditingController();
   String searchQuery = "";
-  late NoteBloc _noteBloc;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _noteBloc = context.read<NoteBloc>();
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _noteBloc.loadNotes(groupId: widget.groupId);
+      BlocProvider.of<NoteBloc>(context).loadNotes(groupId: widget.groupId);
     });
   }
 
@@ -105,116 +109,127 @@ class _NotesState extends State<Notes> {
   }
 
   Widget wholeBody(BuildContext context) {
-    return Column(
-      children: [
-        searchBar(),
-        Expanded(
-          child: BlocBuilder<NoteBloc, NoteState>(
-            builder: (context, state) {
-              if (state is NoteLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is NotesLoaded) {
-                final filteredNotes = state.notes.where((note) {
-                  return note.title.toLowerCase().contains(searchQuery);
-                }).toList();
-
-                if (filteredNotes.isEmpty) {
-                  return Center(
-                    child: Text(
-                      searchQuery.isEmpty ? 'No notes' : 'No matching notes',
-                    ),
-                  );
+    return BlocListener<NoteBloc, NoteState>(
+      listener: (context, state) async {
+        if (state is NoteDeleted) {
+          BlocProvider.of<NoteBloc>(context).loadNotes(groupId: widget.groupId);
+        } else if (state is NoteError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Column(
+        children: [
+          searchBar(),
+          Expanded(
+            child: BlocBuilder<NoteBloc, NoteState>(
+              builder: (context, state) {
+                if (state is NoteLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
+                if (state is NotesLoaded) {
+                  final filteredNotes = state.notes.where((note) {
+                    return note.title.toLowerCase().contains(searchQuery);
+                  }).toList();
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
-                  itemCount: filteredNotes.length,
-                  itemBuilder: (context, index) {
-                    final note = filteredNotes[index];
-
-                    return Dismissible(
-                      key: ValueKey(note.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(color: AppColors.alert),
-                      confirmDismiss: (_) async {
-                        return await _confirmDelete(note.title);
-                      },
-                      onDismissed: (_) {
-                        _noteBloc.deleteNote(
-                          groupId: widget.groupId,
-                          noteId: note.id,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${note.title} note deleted!'),
-                          ),
-                        );
-                      },
-                      child: AppCardStyles.noteList(
-                        title: note.title,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: _noteBloc,
-                                child: NoteViewEdit(
-                                  note: note,
-                                  groupId: widget.groupId,
-                                  updatedBy: widget.createdBy,
-                                ),
-                              ),
-                            ),
-                          ).then((_) {
-                            if (mounted) {
-                              _noteBloc.loadNotes(groupId: widget.groupId);
-                            }
-                          });
-                        },
+                  if (filteredNotes.isEmpty) {
+                    return Center(
+                      child: Text(
+                        searchQuery.isEmpty ? 'No notes' : 'No matching notes',
                       ),
                     );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.m,
+                    ),
+                    itemCount: filteredNotes.length,
+                    itemBuilder: (context, index) {
+                      final note = filteredNotes[index];
+
+                      return Dismissible(
+                        key: ValueKey(note.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(color: AppColors.alert),
+                        confirmDismiss: (_) async {
+                          return await _confirmDelete(note.title);
+                        },
+                        onDismissed: (_) {
+                          BlocProvider.of<NoteBloc>(context).deleteNote(
+                            groupId: widget.groupId,
+                            noteId: note.id,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${note.title} note deleted!'),
+                            ),
+                          );
+                        },
+                        child: AppCardStyles.noteList(
+                          title: note.title,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => NoteViewEdit(
+                                  note: note,
+                                  groupId: widget.groupId,
+                                  updatedBy: widget.updatedBy,
+                                ),
+                              ),
+                            ).then((_) {
+                              if (mounted) {
+                                BlocProvider.of<NoteBloc>(
+                                  context,
+                                ).loadNotes(groupId: widget.groupId);
+                              }
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: FloatingActionButton(
-            onPressed: () {
-              final uid = FirebaseAuth.instance.currentUser?.uid;
-              if (uid == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('User or group not found')),
-                );
-                return;
-              }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                    value: _noteBloc,
-                    child: NoteCreate(
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: FloatingActionButton(
+              onPressed: () {
+                final uid = FirebaseAuth.instance.currentUser?.uid;
+                if (uid == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User or group not found')),
+                  );
+                  return;
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => NoteCreate(
                       groupId: widget.groupId,
                       createdBy: widget.createdBy,
                     ),
                   ),
-                ),
-              ).then((_) {
-                if (mounted) {
-                  _noteBloc.loadNotes(groupId: widget.groupId);
-                }
-              });
-            },
-            backgroundColor: AppColors.primary,
-            child: const Icon(Icons.add),
+                ).then((_) {
+                  if (mounted) {
+                    BlocProvider.of<NoteBloc>(
+                      context,
+                    ).loadNotes(groupId: widget.groupId);
+                  }
+                });
+              },
+              backgroundColor: AppColors.primary,
+              child: const Icon(Icons.add),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

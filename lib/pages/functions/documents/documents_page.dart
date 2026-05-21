@@ -31,7 +31,6 @@ class Documents extends StatefulWidget {
 class _DocumentsState extends State<Documents> {
   String searchQuery = "";
   final fileNameController = TextEditingController();
-  late DocumentBloc _documentBloc;
 
   String _formatFileSize(int bytes) {
     if (bytes < 1024) {
@@ -62,14 +61,15 @@ class _DocumentsState extends State<Documents> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _documentBloc = context.read<DocumentBloc>();
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _documentBloc.loadDocuments(groupId: widget.groupId);
+      BlocProvider.of<DocumentBloc>(
+        context,
+      ).loadDocuments(groupId: widget.groupId);
     });
   }
 
@@ -130,179 +130,195 @@ class _DocumentsState extends State<Documents> {
   }
 
   Widget wholeBody(BuildContext context) {
-    return Column(
-      children: [
-        searchBar(),
-        Expanded(
-          child: BlocBuilder<DocumentBloc, DocumentState>(
-            builder: (context, state) {
-              if (state is DocumentLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is DocumentLoaded) {
-                final filteredContacts = state.documents.where((contact) {
-                  return contact.fileName.toLowerCase().contains(searchQuery);
-                }).toList();
-
-                if (filteredContacts.isEmpty) {
-                  return Center(
-                    child: Text(
-                      searchQuery.isEmpty
-                          ? 'No documents'
-                          : 'No matching documents',
-                    ),
-                  );
+    return BlocListener<DocumentBloc, DocumentState>(
+      listener: (context, state) async {
+        if (state is DocumentDeleted) {
+          BlocProvider.of<DocumentBloc>(
+            context,
+          ).loadDocuments(groupId: widget.groupId);
+        } else if (state is DocumentError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Column(
+        children: [
+          searchBar(),
+          Expanded(
+            child: BlocBuilder<DocumentBloc, DocumentState>(
+              builder: (context, state) {
+                if (state is DocumentLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
+                if (state is DocumentLoaded) {
+                  final filteredContacts = state.documents.where((contact) {
+                    return contact.fileName.toLowerCase().contains(searchQuery);
+                  }).toList();
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
-                  itemCount: filteredContacts.length,
-                  itemBuilder: (context, index) {
-                    final document = filteredContacts[index];
-
-                    return Dismissible(
-                      key: ValueKey(document.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(color: AppColors.alert),
-                      confirmDismiss: (_) async {
-                        return await _confirmDelete(document.fileName);
-                      },
-                      onDismissed: (_) {
-                        _documentBloc.deleteDocument(
-                          groupId: widget.groupId,
-                          documentId: document.id,
-                          fileName: document.fileName,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${document.fileName} document deleted!',
-                            ),
-                          ),
-                        );
-                      },
-                      child: AppCardStyles.documentList(
-                        title: document.fileName,
-                        subtitle: Text(
-                          '${_formatFileSize(document.fileSize)} • ${_formatFileType(document.fileType)}',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: AppColors.textSecondary,
-                                fontSize: 12,
-                              ),
-                        ),
-                        onTap: () async {
-                          final shouldDownload = await showDialog<bool>(
-                            context: context,
-                            builder: (dialogContext) {
-                              return AlertDialog(
-                                title: const Text('Download document'),
-                                content: Text(
-                                  'Do you want to download ${document.fileName} on your device?',
-                                ),
-                                actions: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.m,
-                                      vertical: AppSpacing.xs,
-                                    ),
-                                    child: Center(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          AppButton(
-                                            text: 'Cancel',
-                                            onPressed: () => Navigator.pop(
-                                              dialogContext,
-                                              false,
-                                            ),
-                                            type: ButtonType.dialogCancel,
-                                          ),
-                                          const SizedBox(width: AppSpacing.l),
-                                          AppButton(
-                                            text: 'Download',
-                                            onPressed: () => Navigator.pop(
-                                              dialogContext,
-                                              true,
-                                            ),
-                                            type: ButtonType.dialogSave,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-
-                          if (shouldDownload != true) return;
-
-                          try {
-                            final downloadPath = await widget.documentService
-                                .downloadDocument(
-                                  groupId: widget.groupId,
-                                  fileName: document.fileName,
-                                );
-
-                            if (!mounted) return;
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('File saved to: $downloadPath'),
-                              ),
-                            );
-                          } catch (e) {
-                            if (!mounted) return;
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Download failed: $e'),
-                                backgroundColor: AppColors.alert,
-                              ),
-                            );
-                          }
-
-                          if (!mounted) return;
-                          _documentBloc.loadDocuments(groupId: widget.groupId);
-                        },
+                  if (filteredContacts.isEmpty) {
+                    return Center(
+                      child: Text(
+                        searchQuery.isEmpty
+                            ? 'No documents'
+                            : 'No matching documents',
                       ),
                     );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.m,
+                    ),
+                    itemCount: filteredContacts.length,
+                    itemBuilder: (context, index) {
+                      final document = filteredContacts[index];
+
+                      return Dismissible(
+                        key: ValueKey(document.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(color: AppColors.alert),
+                        confirmDismiss: (_) async {
+                          return await _confirmDelete(document.fileName);
+                        },
+                        onDismissed: (_) {
+                          BlocProvider.of<DocumentBloc>(context).deleteDocument(
+                            groupId: widget.groupId,
+                            documentId: document.id,
+                            fileName: document.fileName,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${document.fileName} document deleted!',
+                              ),
+                            ),
+                          );
+                        },
+                        child: AppCardStyles.documentList(
+                          title: document.fileName,
+                          subtitle: Text(
+                            '${_formatFileSize(document.fileSize)} • ${_formatFileType(document.fileType)}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 12,
+                                ),
+                          ),
+                          onTap: () async {
+                            final shouldDownload = await showDialog<bool>(
+                              context: context,
+                              builder: (dialogContext) {
+                                return AlertDialog(
+                                  title: const Text('Download document'),
+                                  content: Text(
+                                    'Do you want to download ${document.fileName} on your device?',
+                                  ),
+                                  actions: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.m,
+                                        vertical: AppSpacing.xs,
+                                      ),
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            AppButton(
+                                              text: 'Cancel',
+                                              onPressed: () => Navigator.pop(
+                                                dialogContext,
+                                                false,
+                                              ),
+                                              type: ButtonType.dialogCancel,
+                                            ),
+                                            const SizedBox(width: AppSpacing.l),
+                                            AppButton(
+                                              text: 'Download',
+                                              onPressed: () => Navigator.pop(
+                                                dialogContext,
+                                                true,
+                                              ),
+                                              type: ButtonType.dialogSave,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (shouldDownload != true) return;
+
+                            try {
+                              final downloadPath = await widget.documentService
+                                  .downloadDocument(
+                                    groupId: widget.groupId,
+                                    fileName: document.fileName,
+                                  );
+
+                              if (!mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('File saved to: $downloadPath'),
+                                ),
+                              );
+                            } catch (e) {
+                              if (!mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Download failed: $e'),
+                                  backgroundColor: AppColors.alert,
+                                ),
+                              );
+                            }
+
+                            if (!mounted) return;
+                            BlocProvider.of<DocumentBloc>(
+                              context,
+                            ).loadDocuments(groupId: widget.groupId);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: FloatingActionButton(
-            onPressed: () async {
-              final uid = FirebaseAuth.instance.currentUser?.uid;
-              if (UserSubscriptionService.currentGroupId == null ||
-                  uid == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('User or group not found')),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: FloatingActionButton(
+              onPressed: () async {
+                final uid = FirebaseAuth.instance.currentUser?.uid;
+                if (UserSubscriptionService.currentGroupId == null ||
+                    uid == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User or group not found')),
+                  );
+                  return;
+                }
+                await showDialog(
+                  context: context,
+                  builder: (_) => DocumentDialog(groupId: widget.groupId),
                 );
-                return;
-              }
-              await showDialog(
-                context: context,
-                builder: (_) => BlocProvider.value(
-                  value: _documentBloc,
-                  child: DocumentDialog(groupId: widget.groupId),
-                ),
-              );
-              if (!mounted) return;
-              _documentBloc.loadDocuments(groupId: widget.groupId);
-            },
-            backgroundColor: AppColors.primary,
-            child: const Icon(Icons.add),
+                if (!mounted) return;
+                BlocProvider.of<DocumentBloc>(
+                  context,
+                ).loadDocuments(groupId: widget.groupId);
+              },
+              backgroundColor: AppColors.primary,
+              child: const Icon(Icons.add),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

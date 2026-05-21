@@ -122,8 +122,9 @@ class _DashboardState extends State<Dashboard> {
                 builder: (_) => BlocProvider(
                   create: (_) => NoteBloc(NoteService()),
                   child: Notes(
-                    groupId: currentGroup!,
                     createdBy: FirebaseAuth.instance.currentUser!.uid,
+                    updatedBy: '',
+                    groupId: currentGroup!,
                   ),
                 ),
               ),

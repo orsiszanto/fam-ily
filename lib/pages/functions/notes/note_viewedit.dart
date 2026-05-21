@@ -50,7 +50,7 @@ class _NoteViewEditState extends State<NoteViewEdit> {
     final title = titleController.text.trim();
     final content = contentController.text.trim();
 
-    context.read<NoteBloc>().updateNote(
+    BlocProvider.of<NoteBloc>(context).updateNote(
       groupId: widget.groupId,
       noteId: widget.note.id,
       title: title,

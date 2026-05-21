@@ -27,9 +27,8 @@ class _TodoCreateState extends State<TodoCreate> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final todoBloc = context.read<TodoBloc>();
-      todoBloc.startCreateDraft();
-      todoBloc.addDraftItem();
+      BlocProvider.of<TodoBloc>(context).startCreateDraft();
+      BlocProvider.of<TodoBloc>(context).addDraftItem();
     });
   }
 
@@ -40,10 +39,9 @@ class _TodoCreateState extends State<TodoCreate> {
   }
 
   void _saveTodoList() {
-    context.read<TodoBloc>().saveDraft(
-      groupId: widget.groupId,
-      currentUserId: widget.createdBy,
-    );
+    BlocProvider.of<TodoBloc>(
+      context,
+    ).saveDraft(groupId: widget.groupId, currentUserId: widget.createdBy);
   }
 
   @override
@@ -100,7 +98,7 @@ class _TodoCreateState extends State<TodoCreate> {
         TextFormField(
           controller: listTitleController,
           onChanged: (value) {
-            context.read<TodoBloc>().updateDraftTitle(value);
+            BlocProvider.of<TodoBloc>(context).updateDraftTitle(value);
           },
           decoration: const InputDecoration(
             hintText: "Title",
@@ -123,9 +121,9 @@ class _TodoCreateState extends State<TodoCreate> {
                     onChanged: isSaving
                         ? null
                         : (_) {
-                            context.read<TodoBloc>().updateDraftItemStatus(
-                              i: i,
-                            );
+                            BlocProvider.of<TodoBloc>(
+                              context,
+                            ).updateDraftItemStatus(i: i);
                           },
                   ),
                   Expanded(
@@ -133,10 +131,9 @@ class _TodoCreateState extends State<TodoCreate> {
                       initialValue: item.title,
                       enabled: !isSaving,
                       onChanged: (value) {
-                        context.read<TodoBloc>().updateDraftItemTitle(
-                          i: i,
-                          newTitle: value,
-                        );
+                        BlocProvider.of<TodoBloc>(
+                          context,
+                        ).updateDraftItemTitle(i: i, newTitle: value);
                       },
                       decoration: const InputDecoration(
                         hintText: "Todo item",
@@ -148,7 +145,9 @@ class _TodoCreateState extends State<TodoCreate> {
                     onPressed: isSaving
                         ? null
                         : () {
-                            context.read<TodoBloc>().deleteDraftItem(i: i);
+                            BlocProvider.of<TodoBloc>(
+                              context,
+                            ).deleteDraftItem(i: i);
                           },
                     icon: const Icon(Icons.delete_outline),
                   ),
@@ -165,7 +164,7 @@ class _TodoCreateState extends State<TodoCreate> {
               onPressed: isSaving
                   ? null
                   : () {
-                      context.read<TodoBloc>().addDraftItem();
+                      BlocProvider.of<TodoBloc>(context).addDraftItem();
                     },
               child: const Text("Add Item"),
             ),

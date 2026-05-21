@@ -37,11 +37,9 @@ class _TodoViewEditState extends State<TodoViewEdit> {
     listTitleController = TextEditingController(text: widget.todoList.title);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final todoBloc = context.read<TodoBloc>();
-      todoBloc.startEditDraft(
-        groupId: widget.groupId,
-        todoListId: widget.todoList.id,
-      );
+      BlocProvider.of<TodoBloc>(
+        context,
+      ).startEditDraft(groupId: widget.groupId, todoListId: widget.todoList.id);
     });
   }
 
@@ -52,10 +50,9 @@ class _TodoViewEditState extends State<TodoViewEdit> {
   }
 
   void _saveTodoList() {
-    context.read<TodoBloc>().saveDraft(
-      groupId: widget.groupId,
-      currentUserId: widget.updatedBy,
-    );
+    BlocProvider.of<TodoBloc>(
+      context,
+    ).saveDraft(groupId: widget.groupId, currentUserId: widget.updatedBy);
   }
 
   @override
@@ -117,7 +114,7 @@ class _TodoViewEditState extends State<TodoViewEdit> {
                       const SizedBox(height: AppSpacing.l),
                       ElevatedButton(
                         onPressed: () {
-                          context.read<TodoBloc>().startEditDraft(
+                          BlocProvider.of<TodoBloc>(context).startEditDraft(
                             groupId: widget.groupId,
                             todoListId: widget.todoList.id,
                           );
@@ -148,7 +145,7 @@ class _TodoViewEditState extends State<TodoViewEdit> {
         TextFormField(
           controller: listTitleController,
           onChanged: (value) {
-            context.read<TodoBloc>().updateDraftTitle(value);
+            BlocProvider.of<TodoBloc>(context).updateDraftTitle(value);
           },
           decoration: const InputDecoration(
             hintText: "Title",
@@ -172,9 +169,9 @@ class _TodoViewEditState extends State<TodoViewEdit> {
                     onChanged: isSaving
                         ? null
                         : (_) {
-                            context.read<TodoBloc>().updateDraftItemStatus(
-                              i: i,
-                            );
+                            BlocProvider.of<TodoBloc>(
+                              context,
+                            ).updateDraftItemStatus(i: i);
                           },
                   ),
                   Expanded(
@@ -183,10 +180,9 @@ class _TodoViewEditState extends State<TodoViewEdit> {
                       initialValue: item.title,
                       enabled: !isSaving,
                       onChanged: (value) {
-                        context.read<TodoBloc>().updateDraftItemTitle(
-                          i: i,
-                          newTitle: value,
-                        );
+                        BlocProvider.of<TodoBloc>(
+                          context,
+                        ).updateDraftItemTitle(i: i, newTitle: value);
                       },
                       decoration: const InputDecoration(
                         hintText: "Todo item",
@@ -198,7 +194,9 @@ class _TodoViewEditState extends State<TodoViewEdit> {
                     onPressed: isSaving
                         ? null
                         : () {
-                            context.read<TodoBloc>().deleteDraftItem(i: i);
+                            BlocProvider.of<TodoBloc>(
+                              context,
+                            ).deleteDraftItem(i: i);
                           },
                     icon: const Icon(Icons.delete_outline),
                   ),
@@ -215,7 +213,7 @@ class _TodoViewEditState extends State<TodoViewEdit> {
               onPressed: isSaving
                   ? null
                   : () {
-                      context.read<TodoBloc>().addDraftItem();
+                      BlocProvider.of<TodoBloc>(context).addDraftItem();
                     },
               child: const Text("Add Item"),
             ),

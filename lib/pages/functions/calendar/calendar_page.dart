@@ -30,15 +30,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  DateTime? _rangeStart;
-  DateTime? _rangeEnd;
 
   RangeSelectionMode _rangeMode = RangeSelectionMode.toggledOff;
 
   @override
   void initState() {
     super.initState();
-    context.read<CalendarBloc>().loadEvents(groupId: widget.groupId);
+    BlocProvider.of<CalendarBloc>(context).loadEvents(groupId: widget.groupId);
   }
 
   Future<bool> _confirmDelete(String eventTitle) async {
@@ -91,16 +89,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value: context.read<CalendarBloc>(),
-                child: CreateEventPage(
-                  groupId: widget.groupId,
-                  createdBy: widget.createdBy,
-                ),
+              builder: (_) => CreateEventPage(
+                groupId: widget.groupId,
+                createdBy: widget.createdBy,
+                selectedDay: _selectedDay,
               ),
             ),
           );
-          context.read<CalendarBloc>().loadEvents(groupId: widget.groupId);
+          BlocProvider.of<CalendarBloc>(
+            context,
+          ).loadEvents(groupId: widget.groupId);
         },
       ),
 
@@ -150,37 +148,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
-
-                    _rangeStart = null;
-                    _rangeEnd = null;
-                    _rangeMode = RangeSelectionMode.toggledOff;
                   });
 
-                  context.read<CalendarBloc>().selectDay(
+                  BlocProvider.of<CalendarBloc>(context).selectDay(
                     selectedDay: selectedDay,
                     focusedDay: focusedDay,
                     events: events,
                   );
-                },
-
-                onRangeSelected: (start, end, focusedDay) {
-                  setState(() {
-                    _selectedDay = null;
-                    _focusedDay = focusedDay;
-
-                    _rangeStart = start;
-                    _rangeEnd = end;
-                    _rangeMode = RangeSelectionMode.toggledOn;
-                  });
-
-                  if (start != null && end != null) {
-                    context.read<CalendarBloc>().selectRange(
-                      start: start,
-                      end: end,
-                      focusedDay: focusedDay,
-                      events: events,
-                    );
-                  }
                 },
               );
             },
@@ -222,7 +196,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         return await _confirmDelete(event.title);
                       },
                       onDismissed: (_) {
-                        context.read<CalendarBloc>().deleteEvent(
+                        BlocProvider.of<CalendarBloc>(context).deleteEvent(
                           groupId: widget.groupId,
                           eventId: event.id,
                         );
@@ -241,19 +215,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<CalendarBloc>(),
-                                  child: UpdateEventPage(
-                                    groupId: widget.groupId,
-                                    event: event,
-                                  ),
+                                builder: (_) => UpdateEventPage(
+                                  groupId: widget.groupId,
+                                  event: event,
                                 ),
                               ),
                             );
 
-                            context.read<CalendarBloc>().loadEvents(
-                              groupId: widget.groupId,
-                            );
+                            BlocProvider.of<CalendarBloc>(
+                              context,
+                            ).loadEvents(groupId: widget.groupId);
                           },
                           icon: const Icon(Icons.edit_calendar),
                         ),

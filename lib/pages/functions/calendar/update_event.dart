@@ -84,7 +84,7 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
   }
 
   void _save() {
-    context.read<CalendarBloc>().updateEvent(
+    BlocProvider.of<CalendarBloc>(context).updateEvent(
       groupId: widget.groupId,
       eventId: widget.event.id,
       title: titleController.text,

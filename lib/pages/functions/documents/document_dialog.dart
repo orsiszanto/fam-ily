@@ -54,7 +54,7 @@ class _DocumentDialogState extends State<DocumentDialog> {
       ).showSnackBar(const SnackBar(content: Text('No file selected')));
       return;
     }
-    context.read<DocumentBloc>().uploadDocument(
+    BlocProvider.of<DocumentBloc>(context).uploadDocument(
       groupId: widget.groupId,
       uploadedBy: FirebaseAuth.instance.currentUser!.uid,
       file: file!,

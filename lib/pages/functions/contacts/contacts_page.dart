@@ -31,19 +31,19 @@ class _ContactsState extends State<Contacts> {
   final nameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   String searchQuery = "";
-  late ContactBloc _contactBloc;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _contactBloc = context.read<ContactBloc>();
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _contactBloc.loadContacts(groupId: widget.groupId);
+      BlocProvider.of<ContactBloc>(
+        context,
+      ).loadContacts(groupId: widget.groupId);
     });
   }
 
@@ -107,106 +107,119 @@ class _ContactsState extends State<Contacts> {
   }
 
   Widget wholeBody(BuildContext context) {
-    return Column(
-      children: [
-        searchBar(),
-        Expanded(
-          child: BlocBuilder<ContactBloc, ContactState>(
-            builder: (context, state) {
-              if (state is ContactLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is ContactLoaded) {
-                final filteredContacts = state.contacts.where((contact) {
-                  return contact.name.toLowerCase().contains(searchQuery);
-                }).toList();
-
-                if (filteredContacts.isEmpty) {
-                  return Center(
-                    child: Text(
-                      searchQuery.isEmpty
-                          ? 'No contacts'
-                          : 'No matching contacts',
-                    ),
-                  );
+    return BlocListener<ContactBloc, ContactState>(
+      listener: (context, state) async {
+        if (state is ContactDeleted) {
+          BlocProvider.of<ContactBloc>(
+            context,
+          ).loadContacts(groupId: widget.groupId);
+        } else if (state is ContactError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Column(
+        children: [
+          searchBar(),
+          Expanded(
+            child: BlocBuilder<ContactBloc, ContactState>(
+              builder: (context, state) {
+                if (state is ContactLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
+                if (state is ContactLoaded) {
+                  final filteredContacts = state.contacts.where((contact) {
+                    return contact.name.toLowerCase().contains(searchQuery);
+                  }).toList();
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
-                  itemCount: filteredContacts.length,
-                  itemBuilder: (context, index) {
-                    final contact = filteredContacts[index];
+                  if (filteredContacts.isEmpty) {
+                    return Center(
+                      child: Text(
+                        searchQuery.isEmpty
+                            ? 'No contacts'
+                            : 'No matching contacts',
+                      ),
+                    );
+                  }
 
-                    return Dismissible(
-                      key: ValueKey(contact.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(color: AppColors.alert),
-                      confirmDismiss: (_) async {
-                        return await _confirmDelete(contact.name);
-                      },
-                      onDismissed: (_) {
-                        _contactBloc.deleteContact(
-                          groupId: widget.groupId,
-                          contactId: contact.id,
-                        );
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.m,
+                    ),
+                    itemCount: filteredContacts.length,
+                    itemBuilder: (context, index) {
+                      final contact = filteredContacts[index];
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${contact.name} contact deleted!'),
-                          ),
-                        );
-                      },
-                      child: AppCardStyles.contactList(
-                        name: contact.name,
-                        onTap: () async {
-                          await showDialog(
-                            context: context,
-                            builder: (_) => BlocProvider.value(
-                              value: _contactBloc,
-                              child: ContactDialog(
+                      return Dismissible(
+                        key: ValueKey(contact.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(color: AppColors.alert),
+                        confirmDismiss: (_) async {
+                          return await _confirmDelete(contact.name);
+                        },
+                        onDismissed: (_) {
+                          BlocProvider.of<ContactBloc>(context).deleteContact(
+                            groupId: widget.groupId,
+                            contactId: contact.id,
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${contact.name} contact deleted!'),
+                            ),
+                          );
+                        },
+                        child: AppCardStyles.contactList(
+                          name: contact.name,
+                          onTap: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (_) => ContactDialog(
                                 groupId: widget.groupId,
                                 contact: contact,
                               ),
-                            ),
-                          );
-                          if (!mounted) return;
-                          _contactBloc.loadContacts(groupId: widget.groupId);
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
+                            );
+                            if (!mounted) return;
+                            BlocProvider.of<ContactBloc>(
+                              context,
+                            ).loadContacts(groupId: widget.groupId);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: FloatingActionButton(
-            onPressed: () async {
-              final uid = FirebaseAuth.instance.currentUser?.uid;
-              if (uid == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('User or group not found')),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: FloatingActionButton(
+              onPressed: () async {
+                final uid = FirebaseAuth.instance.currentUser?.uid;
+                if (uid == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User or group not found')),
+                  );
+                  return;
+                }
+                await showDialog(
+                  context: context,
+                  builder: (_) => ContactDialog(groupId: widget.groupId),
                 );
-                return;
-              }
-              await showDialog(
-                context: context,
-                builder: (_) => BlocProvider.value(
-                  value: _contactBloc,
-                  child: ContactDialog(groupId: widget.groupId),
-                ),
-              );
-              if (!mounted) return;
-              _contactBloc.loadContacts(groupId: widget.groupId);
-            },
-            backgroundColor: AppColors.primary,
-            child: const Icon(Icons.add),
+                if (!mounted) return;
+                BlocProvider.of<ContactBloc>(
+                  context,
+                ).loadContacts(groupId: widget.groupId);
+              },
+              backgroundColor: AppColors.primary,
+              child: const Icon(Icons.add),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
