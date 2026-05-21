@@ -54,8 +54,6 @@ class _DocumentDialogState extends State<DocumentDialog> {
       ).showSnackBar(const SnackBar(content: Text('No file selected')));
       return;
     }
-    print('USER');
-    print(FirebaseAuth.instance.currentUser);
     context.read<DocumentBloc>().uploadDocument(
       groupId: widget.groupId,
       uploadedBy: FirebaseAuth.instance.currentUser!.uid,
@@ -92,7 +90,6 @@ class _DocumentDialogState extends State<DocumentDialog> {
                       setState(() {
                         file = File(picked.files.first.path!);
                       });
-                      print(picked.files.first.name);
                     }
                   },
                   child: Text(
@@ -110,22 +107,25 @@ class _DocumentDialogState extends State<DocumentDialog> {
                   horizontal: AppSpacing.m,
                   vertical: AppSpacing.xs,
                 ),
-                child: Row(
-                  children: [
-                    AppButton(
-                      text: 'Cancel',
-                      onPressed: () => Navigator.pop(context),
-                      isLoading: isLoading,
-                      type: ButtonType.dialogCancel,
-                    ),
-                    const SizedBox(width: AppSpacing.xl),
-                    AppButton(
-                      text: 'Save',
-                      onPressed: _uploadDocument,
-                      isLoading: isLoading,
-                      type: ButtonType.dialogSave,
-                    ),
-                  ],
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppButton(
+                        text: 'Cancel',
+                        onPressed: () => Navigator.pop(context),
+                        isLoading: isLoading,
+                        type: ButtonType.dialogCancel,
+                      ),
+                      const SizedBox(width: AppSpacing.xl),
+                      AppButton(
+                        text: 'Save',
+                        onPressed: _uploadDocument,
+                        isLoading: isLoading,
+                        type: ButtonType.dialogSave,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

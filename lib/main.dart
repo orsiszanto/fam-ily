@@ -26,7 +26,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Background Message: ${message.messageId}");
 }
 
 void main() async {
@@ -108,8 +107,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> handleBackgroundMessage(RemoteMessage message) async {
-  print('Message: ${message.notification?.title}');
 }

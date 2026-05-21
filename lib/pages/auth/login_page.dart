@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(height: 26),
-                    Text('If you have no account, please sign in'),
+                    Text('If you have no account, please sign up'),
                     AppButton(
                       text: 'Sign up',
                       type: ButtonType.inverse,

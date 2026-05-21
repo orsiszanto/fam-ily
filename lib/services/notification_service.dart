@@ -79,9 +79,6 @@ class NotificationService {
       );
     }
 
-    final fcmToken = await _firebaseMessaging.getToken();
-    print("FCM TOKEN: $fcmToken");
-
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       _handleNotificationTap(message.data);
     });
@@ -92,7 +89,6 @@ class NotificationService {
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Message: ${message.notification?.title}');
 
       final notification = message.notification;
       final android = notification?.android;

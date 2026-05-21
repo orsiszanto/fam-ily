@@ -87,26 +87,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 horizontal: AppSpacing.m,
                 vertical: AppSpacing.xs,
               ),
-              child: Row(
-                children: [
-                  AppButton(
-                    text: "Close",
-                    onPressed: () => Navigator.pop(context),
-                    type: ButtonType.dialogCancel,
-                  ),
-                  const SizedBox(width: AppSpacing.xl),
-                  AppButton(
-                    text: "Copy",
-                    onPressed: () async {
-                      await Clipboard.setData(ClipboardData(text: groupCode));
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Group code copied!")),
-                      );
-                    },
-                    type: ButtonType.dialogSave,
-                  ),
-                ],
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      text: "Close",
+                      onPressed: () => Navigator.pop(context),
+                      type: ButtonType.dialogCancel,
+                    ),
+                    const SizedBox(width: AppSpacing.xl),
+                    AppButton(
+                      text: "Copy",
+                      onPressed: () async {
+                        await Clipboard.setData(ClipboardData(text: groupCode));
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Group code copied!")),
+                        );
+                      },
+                      type: ButtonType.dialogSave,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -156,36 +159,54 @@ class _ProfilePageState extends State<ProfilePage> {
 
             showDialog(
               context: context,
-              builder: (_) => AlertDialog(
+              builder: (dialogContext) => AlertDialog(
                 title: const Text("Delete account"),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       "This action cannot be undone. Enter your password to continue.",
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.m),
                     TextField(
                       controller: passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
                         labelText: "Current password",
+                        border: OutlineInputBorder(),
                       ),
                     ),
                   ],
                 ),
                 actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      final password = passwordController.text.trim();
-                      Navigator.pop(context);
-                      _userBloc.deleteProfile(password);
-                    },
-                    child: const Text("Delete"),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.m,
+                      vertical: AppSpacing.xs,
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AppButton(
+                            text: "Cancel",
+                            onPressed: () => Navigator.pop(dialogContext),
+                            type: ButtonType.dialogCancel,
+                          ),
+                          const SizedBox(width: AppSpacing.xl),
+                          AppButton(
+                            text: "Delete",
+                            onPressed: () {
+                              final password = passwordController.text.trim();
+                              Navigator.pop(dialogContext);
+                              _userBloc.deleteProfile(password);
+                            },
+                            type: ButtonType.dialogDelete,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

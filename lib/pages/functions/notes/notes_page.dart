@@ -1,4 +1,3 @@
-import 'package:familyapp/services/userSubscription_service.dart';
 import 'package:flutter/material.dart';
 //design
 import 'package:familyapp/design/app_searchBar.dart';
@@ -68,20 +67,23 @@ class _NotesState extends State<Notes> {
                 horizontal: AppSpacing.xs,
                 vertical: AppSpacing.xs,
               ),
-              child: Row(
-                children: [
-                  AppButton(
-                    text: 'Cancel',
-                    onPressed: () => Navigator.pop(dialogContext, false),
-                    type: ButtonType.dialogCancel,
-                  ),
-                  SizedBox(width: AppSpacing.xl),
-                  AppButton(
-                    text: 'Delete',
-                    onPressed: () => Navigator.pop(dialogContext, true),
-                    type: ButtonType.dialogSave,
-                  ),
-                ],
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                      type: ButtonType.dialogCancel,
+                    ),
+                    SizedBox(width: AppSpacing.xl),
+                    AppButton(
+                      text: 'Delete',
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                      type: ButtonType.dialogDelete,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -185,8 +187,7 @@ class _NotesState extends State<Notes> {
           child: FloatingActionButton(
             onPressed: () {
               final uid = FirebaseAuth.instance.currentUser?.uid;
-              if (UserSubscriptionService.currentGroupId! == null ||
-                  uid == null) {
+              if (uid == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('User or group not found')),
                 );

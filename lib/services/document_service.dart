@@ -71,7 +71,6 @@ class DocumentService {
         );
       }).toList();
     } catch (e) {
-      print('Error getting documents: $e');
       rethrow;
     }
   }

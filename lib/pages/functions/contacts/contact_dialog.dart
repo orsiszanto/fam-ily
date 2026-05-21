@@ -104,22 +104,25 @@ class _ContactDialogState extends State<ContactDialog> {
                   horizontal: AppSpacing.m,
                   vertical: AppSpacing.xs,
                 ),
-                child: Row(
-                  children: [
-                    AppButton(
-                      text: 'Cancel',
-                      onPressed: () => Navigator.pop(context),
-                      isLoading: isLoading,
-                      type: ButtonType.dialogCancel,
-                    ),
-                    const SizedBox(width: AppSpacing.xl),
-                    AppButton(
-                      text: 'Save',
-                      onPressed: _saveContact,
-                      isLoading: isLoading,
-                      type: ButtonType.dialogSave,
-                    ),
-                  ],
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppButton(
+                        text: 'Cancel',
+                        onPressed: () => Navigator.pop(context),
+                        isLoading: isLoading,
+                        type: ButtonType.dialogCancel,
+                      ),
+                      const SizedBox(width: AppSpacing.xl),
+                      AppButton(
+                        text: 'Save',
+                        onPressed: _saveContact,
+                        isLoading: isLoading,
+                        type: ButtonType.dialogSave,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

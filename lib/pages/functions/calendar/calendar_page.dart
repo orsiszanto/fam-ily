@@ -54,20 +54,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 horizontal: AppSpacing.xs,
                 vertical: AppSpacing.xs,
               ),
-              child: Row(
-                children: [
-                  AppButton(
-                    text: 'Cancel',
-                    onPressed: () => Navigator.pop(dialogContext, false),
-                    type: ButtonType.dialogCancel,
-                  ),
-                  SizedBox(width: AppSpacing.xl),
-                  AppButton(
-                    text: 'Delete',
-                    onPressed: () => Navigator.pop(dialogContext, true),
-                    type: ButtonType.dialogSave,
-                  ),
-                ],
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                      type: ButtonType.dialogCancel,
+                    ),
+                    SizedBox(width: AppSpacing.xl),
+                    AppButton(
+                      text: 'Delete',
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                      type: ButtonType.dialogDelete,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

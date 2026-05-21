@@ -116,7 +116,6 @@ class _RegScreenState extends State<RegScreen> {
                           obscureText: _obscurePassword,
                         ),
                         SizedBox(height: AppSpacing.l),
-
                         TextFormField(
                           controller: confirmPasswordController,
                           validator: validateConfirmPassword,

@@ -92,20 +92,23 @@ class _DocumentsState extends State<Documents> {
                 horizontal: AppSpacing.xs,
                 vertical: AppSpacing.xs,
               ),
-              child: Row(
-                children: [
-                  AppButton(
-                    text: 'Cancel',
-                    onPressed: () => Navigator.pop(dialogContext, false),
-                    type: ButtonType.dialogCancel,
-                  ),
-                  const SizedBox(width: AppSpacing.xl),
-                  AppButton(
-                    text: 'Delete',
-                    onPressed: () => Navigator.pop(dialogContext, true),
-                    type: ButtonType.dialogDelete,
-                  ),
-                ],
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      text: 'Cancel',
+                      onPressed: () => Navigator.pop(dialogContext, false),
+                      type: ButtonType.dialogCancel,
+                    ),
+                    const SizedBox(width: AppSpacing.xl),
+                    AppButton(
+                      text: 'Delete',
+                      onPressed: () => Navigator.pop(dialogContext, true),
+                      type: ButtonType.dialogDelete,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -204,26 +207,29 @@ class _DocumentsState extends State<Documents> {
                                       horizontal: AppSpacing.m,
                                       vertical: AppSpacing.xs,
                                     ),
-                                    child: Row(
-                                      children: [
-                                        AppButton(
-                                          text: 'Cancel',
-                                          onPressed: () => Navigator.pop(
-                                            dialogContext,
-                                            false,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          AppButton(
+                                            text: 'Cancel',
+                                            onPressed: () => Navigator.pop(
+                                              dialogContext,
+                                              false,
+                                            ),
+                                            type: ButtonType.dialogCancel,
                                           ),
-                                          type: ButtonType.dialogCancel,
-                                        ),
-                                        const SizedBox(width: AppSpacing.xl),
-                                        AppButton(
-                                          text: 'Download',
-                                          onPressed: () => Navigator.pop(
-                                            dialogContext,
-                                            true,
+                                          const SizedBox(width: AppSpacing.xl),
+                                          AppButton(
+                                            text: 'Download',
+                                            onPressed: () => Navigator.pop(
+                                              dialogContext,
+                                              true,
+                                            ),
+                                            type: ButtonType.dialogSave,
                                           ),
-                                          type: ButtonType.dialogSave,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
