@@ -17,7 +17,6 @@ class UserService {
     String name,
     bool createNewGroup,
     String? groupCode,
-    bool isParent,
   ) async {
     final trimmedPassword = password.trim();
 
@@ -84,7 +83,6 @@ class UserService {
         'groupCode': finalGroupCode,
         'groupId': groupId,
         'name': name,
-        'isParent': isParent,
       });
 
       await FirebaseFirestore.instance
@@ -154,10 +152,9 @@ class UserService {
     final email = data['email'] ?? '';
     final groupCode = data['groupCode'] ?? '';
     final groupId = data['groupId'] ?? '';
-    final isParent = data['isParent'] ?? false;
     final name = data['name'] ?? '';
 
-    return appUser.User(email, groupCode, groupId, isParent, name);
+    return appUser.User(email, groupCode, groupId, name);
   }
 
   static Future<void> updateName(String newName) async {

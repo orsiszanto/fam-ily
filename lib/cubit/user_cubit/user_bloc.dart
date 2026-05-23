@@ -47,7 +47,6 @@ class UserBloc extends Cubit<UserState> {
     String name,
     bool createNewGroup,
     String? groupCode,
-    bool isParent,
   ) {
     emit(AuthInProgress());
 
@@ -57,7 +56,6 @@ class UserBloc extends Cubit<UserState> {
           name,
           createNewGroup,
           groupCode,
-          isParent,
         )
         .then((user) {
           emit(RegisterSuccessful(user));

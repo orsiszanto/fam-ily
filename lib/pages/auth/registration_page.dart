@@ -21,7 +21,6 @@ class _RegScreenState extends State<RegScreen> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final groupCodeController = TextEditingController();
-  bool isParent = false;
   bool createNewGroup = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -147,19 +146,6 @@ class _RegScreenState extends State<RegScreen> {
                             labelText: "Name",
                             border: OutlineInputBorder(),
                           ),
-                        ),
-                        SizedBox(height: AppSpacing.l),
-
-                        CheckboxListTile(
-                          value: isParent,
-                          onChanged: (value) {
-                            setState(() {
-                              isParent = value ?? false;
-                            });
-                          },
-                          title: const Text("Sign up as a Parent"),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
                         ),
                         SizedBox(height: AppSpacing.l),
 
@@ -302,7 +288,6 @@ class _RegScreenState extends State<RegScreen> {
           name,
           createNewGroup,
           createNewGroup ? null : groupCode,
-          isParent,
         );
       }
     },
