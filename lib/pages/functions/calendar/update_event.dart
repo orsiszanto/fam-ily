@@ -101,7 +101,7 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Create Event")),
+      appBar: AppBar(title: const Text("Update Event")),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.m),
         child: Column(
