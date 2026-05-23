@@ -1,4 +1,4 @@
-# H93NV2 - h378048 - Szántó Orsolya Szakdolgozat
+# Szántó Orsolya Szakdolgozat
 ## Háztartásvezetést támogató mobilalkalmazás tervezése és fejlesztése
 ## Design and Development of a Mobile Application for Household Management
 
