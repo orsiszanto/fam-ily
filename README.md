@@ -1,7 +1,9 @@
-# H93NV2 - h378048 - Szántó Orsolya - családi tervező mobil alkalmazás Szakdolgozat
-Firebase, Flutter
+# H93NV2 - h378048 - Szántó Orsolya Szakdolgozat
+## Háztartásvezetést támogató mobilalkalmazás tervezése és fejlesztése
+## Design and Development of a Mobile Application for Household Management
 
-## Installation / Setup
+
+### Installation / Setup
 
 After you pull the project, run these commands to start the app:
 
