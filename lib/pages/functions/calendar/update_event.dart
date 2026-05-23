@@ -135,6 +135,7 @@ class _UpdateEventPageState extends State<UpdateEventPage> {
               controller: descriptionController,
               decoration: const InputDecoration(hintText: "Description"),
             ),
+            const SizedBox(height: AppSpacing.l),
             Row(
               children: [
                 Expanded(

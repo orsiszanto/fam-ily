@@ -130,6 +130,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               controller: descriptionController,
               decoration: const InputDecoration(hintText: "Description"),
             ),
+            const SizedBox(height: AppSpacing.l),
             Row(
               children: [
                 Expanded(
