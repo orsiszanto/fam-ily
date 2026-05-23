@@ -60,11 +60,7 @@ export const onNoteCreated = onDocumentCreated(
             return;
         }
 
-        await sendGroupNotification(groupId, "New note!", data.title ?? "New note created", {
-          target: "notes",
-          groupId,
-          noteId: event.params.noteId,
-        });
+        await sendGroupNotification(groupId, "New note!", data.title ?? "New note created", {});
     }
 );
 
@@ -78,11 +74,7 @@ export const onContactCreated = onDocumentCreated(
             return;
         }
 
-        await sendGroupNotification(groupId, "New contact!", data.name ?? "New contact created", {
-          target: "contacts",
-          groupId,
-          contactId: event.params.contactId,
-        });
+        await sendGroupNotification(groupId, "New contact!", data.name ?? "New contact created", {});
     }
 );
 
@@ -100,12 +92,7 @@ export const onDocumentCreatedNotification = onDocumentCreated(
             groupId,
             "New document!",
             data.fileName ?? "New document uploaded",
-            {
-              target: "documents",
-              groupId,
-              documentId: event.params.documentId,
-              fileName: (data.fileName ?? "").toString(),
-            },
+            {},
         );
     }
 );
@@ -124,11 +111,7 @@ export const onCalendarEventCreated = onDocumentCreated(
             groupId,
             "New calendar event!",
             data.title ?? "New calendar event created",
-            {
-              target: "calendar",
-              groupId,
-              eventId: event.params.eventId,
-            },
+            {},
         );
     }
 );
@@ -147,11 +130,7 @@ export const onTodoCreated = onDocumentCreated(
             groupId,
             "New todo list!",
             data.title ?? "New todo list created",
-            {
-              target: "todoLists",
-              groupId,
-              todoListId: event.params.todoListId,
-            },
+            {},
         );
     }
 );

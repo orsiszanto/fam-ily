@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
@@ -10,8 +8,6 @@ class NotificationService {
   factory NotificationService() => _instance;
 
   static final NotificationService _instance = NotificationService._internal();
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
@@ -48,10 +44,7 @@ class NotificationService {
         android: androidInitializationSettings,
       );
 
-      await _localNotificationsPlugin.initialize(
-        initializationSettings,
-        onDidReceiveNotificationResponse: _handleLocalNotificationTap,
-      );
+      await _localNotificationsPlugin.initialize(initializationSettings);
 
       await _localNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -92,23 +85,8 @@ class NotificationService {
               icon: '@mipmap/ic_launcher',
             ),
           ),
-          payload: message.data.isNotEmpty ? jsonEncode(message.data) : null,
         );
       }
     });
-  }
-
-  void _handleLocalNotificationTap(NotificationResponse response) {
-    final payload = response.payload;
-    if (payload == null || payload.isEmpty) {
-      return;
-    }
-
-    try {
-      final decoded = jsonDecode(payload);
-      if (decoded is Map<String, dynamic>) {}
-    } catch (_) {
-      // Ignore malformed payloads.
-    }
   }
 }
